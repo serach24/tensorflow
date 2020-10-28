@@ -1,11 +1,9 @@
 #!/bin/bash -e
-pip install six numpy wheel setuptools mock 'future>=0.17.1'
-pip install keras_applications --no-deps
+pip install pip numpy wheel
 pip install keras_preprocessing --no-deps
 
-bazel build -c opt --copt=-g --config=cuda //tensorflow/tools/pip_package:build_pip_package
+bazel build -j 20 --config=cuda --config=opt --config=noaws --config=nogcp --config=nohdfs --config=nonccl --verbose_failures //tensorflow/tools/pip_package:build_pip_package
 
 ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 
-pip install -U /tmp/tensorflow_pkg/tensorflow-2.0.0b1-cp36-cp36m-linux_x86_64.whl
-
+pip install -U /tmp/tensorflow_pkg/tensorflow-2.4.0rc0-cp38-cp38-linux_x86_64.whl
