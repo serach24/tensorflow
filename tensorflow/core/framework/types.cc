@@ -91,6 +91,8 @@ string DataTypeStringInternal(DataType dtype) {
       return "qint32";
     case DT_BFLOAT16:
       return "bfloat16";
+    case DT_CUS:
+      return "cus_type";
     case DT_HALF:
       return "half";
     case DT_RESOURCE:

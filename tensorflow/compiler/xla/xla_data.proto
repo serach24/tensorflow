@@ -82,7 +82,8 @@ enum PrimitiveType {
   // primitive type will have empty dimensions and tuple_shapes fields.
   TOKEN = 17;
 
-  // Next = 19
+  CUS = 19;
+  // Next = 20
 }
 // LINT.ThenChange(
 //   https://www.tensorflow.org/code/tensorflow/compiler/xla/tools/driver.cc
