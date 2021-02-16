@@ -288,6 +288,8 @@ resource_ref = DType(types_pb2.DT_RESOURCE_REF)
 variant_ref = DType(types_pb2.DT_VARIANT_REF)
 bfloat16 = DType(types_pb2.DT_BFLOAT16)
 tf_export("dtypes.bfloat16", "bfloat16").export_constant(__name__, "bfloat16")
+cus = DType(types_pb2.DT_CUS)
+tf_export("dtypes.cus_type", "cus_type").export_constant(__name__, "cus_type")
 float16_ref = DType(types_pb2.DT_HALF_REF)
 half_ref = float16_ref
 float32_ref = DType(types_pb2.DT_FLOAT_REF)
