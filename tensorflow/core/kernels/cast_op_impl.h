@@ -49,9 +49,14 @@ CAST_FUNCTORS(Eigen::ThreadPoolDevice);
   CURRY_TYPES3_NO_HALF(FN, arg0, arg1)       \
   FN(arg0, arg1, Eigen::half);
 
-#define CURRY_TYPES3(FN, arg0, arg1)   \
+#define CURRY_TYPES3_NO_CUS(FN, arg0, arg1)   \
   CURRY_TYPES3_NO_BF16(FN, arg0, arg1) \
   FN(arg0, arg1, bfloat16);
+
+#define CURRY_TYPES3(FN, arg0, arg1)   \
+  CURRY_TYPES3_NO_BF16(FN, arg0, arg1) \
+  FN(arg0, arg1, bfloat16);            \
+  FN(arg0, arg1, cus_type);                   
 
 #define CAST_CASE(DEVICE, IN, OUT)                                        \
   if (DataTypeToEnum<OUT>::value == dst_dtype) {                          \
