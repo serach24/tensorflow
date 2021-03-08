@@ -11,20 +11,20 @@ namespace tensorflow {
 
 // https://stackoverflow.com/questions/25734477/type-casting-struct-to-integer-c
 
-struct cus_type {
-  float value;
+// struct cus_type {
+//   float value;
 
-  operator float() const { return (float)value; }
+//   operator float() const { return (float)value; }
 
-  cus_type& operator=(float i) { 
-    this->set(i);
-    return *this;
-  }
+//   cus_type& operator=(float i) { 
+//     this->set(i);
+//     return *this;
+//   }
 
-  void set(float f) { value = f; }
-  cus_type(){}
-  explicit cus_type(const float f) : value(f) {}
-};
+//   void set(float f) { value = f; }
+//   cus_type(){}
+//   explicit cus_type(const float f) : value(f) {}
+// };
 
 // Conversion routines between an array of float and cus_type of
 // "size".

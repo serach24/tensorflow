@@ -26,8 +26,8 @@ limitations under the License.
 // clang-format off
 #include "third_party/eigen3/unsupported/Eigen/CXX11/FixedPoint"
 // clang-format on
-#include "tensorflow/core/framework/cus_type.h"
 #include "tensorflow/core/framework/bfloat16.h"
+#include "tensorflow/core/framework/cus_type.h"
 #include "tensorflow/core/framework/numeric_types.h"
 #include "tensorflow/core/framework/resource_handle.h"
 #include "tensorflow/core/framework/types.pb.h"

@@ -46,6 +46,9 @@ xla::XlaOp FloatLiteral(xla::XlaBuilder* builder, xla::PrimitiveType type,
     case xla::BF16:
       return xla::ConstantR0<bfloat16>(builder, static_cast<bfloat16>(value));
       break;
+    case xla::CUS:
+      return xla::ConstantR0<cus_type>(builder, static_cast<cus_type>(value));
+      break;
     case xla::F32:
       return xla::ConstantR0<float>(builder, static_cast<float>(value));
       break;

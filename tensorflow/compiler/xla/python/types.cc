@@ -84,6 +84,10 @@ xla::StatusOr<py::dtype> PrimitiveTypeToDtype(PrimitiveType type) {
       TF_ASSIGN_OR_RETURN(py::object bfloat16, Bfloat16Dtype());
       return py::dtype::from_args(bfloat16);
     }
+    case CUS: {
+      TF_ASSIGN_OR_RETURN(py::object cus_type, CusTypeDtype());
+      return py::dtype::from_args(cus_type);
+    }
     case F16:
       return py::dtype("e");  // PEP 3118 code for "float16
     case F32:
