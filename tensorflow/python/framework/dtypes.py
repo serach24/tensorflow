@@ -26,12 +26,12 @@ from tensorflow.core.framework import types_pb2
 # pylint: disable=invalid-import-order,g-bad-import-order
 from tensorflow.python import pywrap_tensorflow  # pylint: disable=unused-import
 from tensorflow.python import _pywrap_bfloat16
-from tensorflow.python import _pywrap_cus_type
+from tensorflow.python import _pywrap_cus
 from tensorflow.python import _dtypes
 from tensorflow.python.util.tf_export import tf_export
 
 _np_bfloat16 = _pywrap_bfloat16.TF_bfloat16_type()
-_np_cus = _pywrap_cus_type.TF_cus_type()
+_np_cus = _pywrap_cus.TF_cus()
 
 
 # pylint: disable=slots-on-old-class
@@ -296,7 +296,7 @@ variant_ref = DType(types_pb2.DT_VARIANT_REF)
 bfloat16 = DType(types_pb2.DT_BFLOAT16)
 tf_export("dtypes.bfloat16", "bfloat16").export_constant(__name__, "bfloat16")
 cus = DType(types_pb2.DT_CUS)
-tf_export("dtypes.cus_type", "cus_type").export_constant(__name__, "cus_type")
+tf_export("dtypes.cus", "cus").export_constant(__name__, "cus")
 float16_ref = DType(types_pb2.DT_HALF_REF)
 half_ref = float16_ref
 float32_ref = DType(types_pb2.DT_FLOAT_REF)

@@ -56,7 +56,7 @@ CAST_FUNCTORS(Eigen::ThreadPoolDevice);
 #define CURRY_TYPES3(FN, arg0, arg1)   \
   CURRY_TYPES3_NO_BF16(FN, arg0, arg1) \
   FN(arg0, arg1, bfloat16);            \
-  FN(arg0, arg1, cus_type);                   
+  FN(arg0, arg1, cus);                   
 
 #define CAST_CASE(DEVICE, IN, OUT)                                        \
   if (DataTypeToEnum<OUT>::value == dst_dtype) {                          \

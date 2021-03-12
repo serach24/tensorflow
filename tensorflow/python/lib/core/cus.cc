@@ -1,6 +1,6 @@
 #include <array>
 
-#include "tensorflow/python/lib/core/cus_type.h"
+#include "tensorflow/python/lib/core/cus.h"
 
 #include "tensorflow/core/framework/numeric_types.h"
 #include "tensorflow/core/lib/strings/strcat.h"
@@ -58,41 +58,41 @@ typedef Py_hash_t HashType;
 #endif  // PY_MAJOR_VERSION < 3
 
 // Forward declaration.
-extern PyTypeObject PyCusType_Type;
+extern PyTypeObject PyCus_Type;
 
 // Representation of a Python custom object.
-struct PyCusType {
+struct PyCus {
   PyObject_HEAD;  // Python object header
-  cus_type value;
+  cus value;
 };
 
-// Returns true if 'object' is a PyCusType.
-bool PyCusType_Check(PyObject* object) {
+// Returns true if 'object' is a PyCus.
+bool PyCus_Check(PyObject* object) {
   return PyObject_IsInstance(object,
-                             reinterpret_cast<PyObject*>(&PyCusType_Type));
+                             reinterpret_cast<PyObject*>(&PyCus_Type));
 }
 
-// Extracts the value of a PyCusType object.
-cus_type PyCusType_CusType(PyObject* object) {
-  return reinterpret_cast<PyCusType*>(object)->value;
+// Extracts the value of a PyCus object.
+cus PyCus_Cus(PyObject* object) {
+  return reinterpret_cast<PyCus*>(object)->value;
 }
 
-// Constructs a PyCusType object from a cus_type.
-Safe_PyObjectPtr PyCusType_FromCusType(cus_type x) {
+// Constructs a PyCus object from a cus.
+Safe_PyObjectPtr PyCus_FromCus(cus x) {
   Safe_PyObjectPtr ref =
-      make_safe(PyCusType_Type.tp_alloc(&PyCusType_Type, 0));
-  PyCusType* p = reinterpret_cast<PyCusType*>(ref.get());
+      make_safe(PyCus_Type.tp_alloc(&PyCus_Type, 0));
+  PyCus* p = reinterpret_cast<PyCus*>(ref.get());
   if (p) {
     p->value = x;
   }
   return ref;
 }
 
-// Converts a Python object to a cus_type value. Returns true on success,
+// Converts a Python object to a cus value. Returns true on success,
 // returns false and reports a Python error on failure.
-bool AsCusType(PyObject* arg, cus_type* output) {
-  if (PyCusType_Check(arg)) {
-    *output = PyCusType_CusType(arg);
+bool AsCus(PyObject* arg, cus* output) {
+  if (PyCus_Check(arg)) {
+    *output = PyCus_Cus(arg);
     return true;
   }
   if (PyFloat_Check(arg)) {
@@ -100,7 +100,7 @@ bool AsCusType(PyObject* arg, cus_type* output) {
     if (PyErr_Occurred()) {
       return false;
     }
-    *output = cus_type(d);
+    *output = cus(d);
     return true;
   }
   if (TfPyInt_Check(arg)) {
@@ -109,13 +109,13 @@ bool AsCusType(PyObject* arg, cus_type* output) {
       return false;
     }
     // TODO(phawkins): check for overflow
-    *output = cus_type(static_cast<float>(l));
+    *output = cus(static_cast<float>(l));
     return true;
   }
   if (PyArray_IsScalar(arg, Float)) {
     float f;
     PyArray_ScalarAsCtype(arg, &f);
-    *output = cus_type(f);
+    *output = cus(f);
     return true;
   }
   PyErr_Format(PyExc_TypeError, "expected number, got %s",
@@ -123,33 +123,33 @@ bool AsCusType(PyObject* arg, cus_type* output) {
   return false;
 }
 
-// Converts a PyCusType into a PyFloat.
-PyObject* PyCusType_Float(PyObject* self) {
-  cus_type x = PyCusType_CusType(self);
+// Converts a PyCus into a PyFloat.
+PyObject* PyCus_Float(PyObject* self) {
+  cus x = PyCus_Cus(self);
   return PyFloat_FromDouble(static_cast<double>(x));
 }
 
-// Converts a PyCusType into a PyInt.
-PyObject* PyCusType_Int(PyObject* self) {
-  cus_type x = PyCusType_CusType(self);
+// Converts a PyCus into a PyInt.
+PyObject* PyCus_Int(PyObject* self) {
+  cus x = PyCus_Cus(self);
   long y = static_cast<long>(x);  // NOLINT
   return TfPyInt_FromLong(y);
 }
 
-// Negates a PyCusType.
-PyObject* PyCusType_Negative(PyObject* self) {
-  cus_type x = PyCusType_CusType(self);
+// Negates a PyCus.
+PyObject* PyCus_Negative(PyObject* self) {
+  cus x = PyCus_Cus(self);
   x.value = -x.value;
-  return PyCusType_FromCusType(x).release();
+  return PyCus_FromCus(x).release();
 }
 
-// Binary arithmetic operators on PyCusType values.
+// Binary arithmetic operators on PyCus values.
 #define CUSTOM_BINOP(name, op)                                  \
-  PyObject* PyCusType_##name(PyObject* a, PyObject* b) {         \
-    cus_type x, y;                                                \
-    if (!AsCusType(a, &x) || !AsCusType(b, &y)) return nullptr; \
-    cus_type z = x op y;                                          \
-    return PyCusType_FromCusType(z).release();                  \
+  PyObject* PyCus_##name(PyObject* a, PyObject* b) {         \
+    cus x, y;                                                \
+    if (!AsCus(a, &x) || !AsCus(b, &y)) return nullptr; \
+    cus z = x op y;                                          \
+    return PyCus_FromCus(z).release();                  \
   }
 CUSTOM_BINOP(Add, +)
 CUSTOM_BINOP(Subtract, -)
@@ -157,18 +157,18 @@ CUSTOM_BINOP(Multiply, *)
 CUSTOM_BINOP(Divide, /)
 #undef CUSTOM_BINOP
 
-// Python number methods for PyCusType objects.
-PyNumberMethods PyCusType_AsNumber = {
-    PyCusType_Add,       // nb_add
-    PyCusType_Subtract,  // nb_subtract
-    PyCusType_Multiply,  // nb_multiply
+// Python number methods for PyCus objects.
+PyNumberMethods PyCus_AsNumber = {
+    PyCus_Add,       // nb_add
+    PyCus_Subtract,  // nb_subtract
+    PyCus_Multiply,  // nb_multiply
 #if PY_MAJOR_VERSION < 3
-    PyCusType_Divide,  // nb_divide
+    PyCus_Divide,  // nb_divide
 #endif
     nullptr,              // nb_remainder
     nullptr,              // nb_divmod
     nullptr,              // nb_power
-    PyCusType_Negative,  // nb_negative
+    PyCus_Negative,  // nb_negative
     nullptr,              // nb_positive
     nullptr,              // nb_absolute
     nullptr,              // nb_nonzero
@@ -181,13 +181,13 @@ PyNumberMethods PyCusType_AsNumber = {
 #if PY_MAJOR_VERSION < 3
     nullptr,  // nb_coerce
 #endif
-    PyCusType_Int,  // nb_int
+    PyCus_Int,  // nb_int
 #if PY_MAJOR_VERSION < 3
-    PyCusType_Int,  // nb_long
+    PyCus_Int,  // nb_long
 #else
     nullptr,  // reserved
 #endif
-    PyCusType_Float,  // nb_float
+    PyCus_Float,  // nb_float
 #if PY_MAJOR_VERSION < 3
     nullptr,  // nb_oct
     nullptr,  // nb_hex
@@ -208,14 +208,14 @@ PyNumberMethods PyCusType_AsNumber = {
     nullptr,  // nb_inplace_or
 
     nullptr,            // nb_floor_divide
-    PyCusType_Divide,  // nb_true_divide
+    PyCus_Divide,  // nb_true_divide
     nullptr,            // nb_inplace_floor_divide
     nullptr,            // nb_inplace_true_divide
     nullptr,            // nb_index
 };
 
-// Constructs a new PyCusType.
-PyObject* PyCusType_New(PyTypeObject* type, PyObject* args, PyObject* kwds) {
+// Constructs a new PyCus.
+PyObject* PyCus_New(PyTypeObject* type, PyObject* args, PyObject* kwds) {
   if (kwds && PyDict_Size(kwds)) {
     PyErr_SetString(PyExc_TypeError, "constructor takes no keyword arguments");
     return nullptr;
@@ -223,27 +223,27 @@ PyObject* PyCusType_New(PyTypeObject* type, PyObject* args, PyObject* kwds) {
   Py_ssize_t size = PyTuple_Size(args);
   if (size != 1) {
     PyErr_SetString(PyExc_TypeError,
-                    "expected number as argument to cus_type constructor");
+                    "expected number as argument to cus constructor");
     return nullptr;
   }
   PyObject* arg = PyTuple_GetItem(args, 0);
 
-  if (PyCusType_Check(arg)) {
+  if (PyCus_Check(arg)) {
     Py_INCREF(arg);
     return arg;
   } else {
-    cus_type value;
-    if (!AsCusType(arg, &value)) {
+    cus value;
+    if (!AsCus(arg, &value)) {
       return nullptr;
     }
-    return PyCusType_FromCusType(value).release();
+    return PyCus_FromCus(value).release();
   }
 }
 
-// Comparisons on PyCusTypes.
-PyObject* PyCusType_RichCompare(PyObject* a, PyObject* b, int op) {
-  cus_type x, y;
-  if (!AsCusType(a, &x) || !AsCusType(b, &y)) return nullptr;
+// Comparisons on PyCuss.
+PyObject* PyCus_RichCompare(PyObject* a, PyObject* b, int op) {
+  cus x, y;
+  if (!AsCus(a, &x) || !AsCus(b, &y)) return nullptr;
   bool result;
   switch (op) {
     case Py_LT:
@@ -270,57 +270,57 @@ PyObject* PyCusType_RichCompare(PyObject* a, PyObject* b, int op) {
   return PyBool_FromLong(result);
 }
 
-// Implementation of repr() for PyCusType.
-PyObject* PyCusType_Repr(PyObject* self) {
-  cus_type x = reinterpret_cast<PyCusType*>(self)->value;
-  string v = strings::StrCat("cus_type(", static_cast<float>(x), ")");
+// Implementation of repr() for PyCus.
+PyObject* PyCus_Repr(PyObject* self) {
+  cus x = reinterpret_cast<PyCus*>(self)->value;
+  string v = strings::StrCat("cus(", static_cast<float>(x), ")");
   return MakePyString(v);
 }
 
-// Implementation of str() for PyCusType.
-PyObject* PyCusType_Str(PyObject* self) {
-  cus_type x = reinterpret_cast<PyCusType*>(self)->value;
+// Implementation of str() for PyCus.
+PyObject* PyCus_Str(PyObject* self) {
+  cus x = reinterpret_cast<PyCus*>(self)->value;
   string v = strings::StrCat(static_cast<float>(x));
   return MakePyString(v);
 }
 
-// Hash function for PyCusType. We use the identity function, which is a weak
+// Hash function for PyCus. We use the identity function, which is a weak
 // hash function.
-HashType PyCusType_Hash(PyObject* self) {
-  cus_type x = reinterpret_cast<PyCusType*>(self)->value;
+HashType PyCus_Hash(PyObject* self) {
+  cus x = reinterpret_cast<PyCus*>(self)->value;
   return x.value;
 }
 
-// Python type for PyCusType objects.
-PyTypeObject PyCusType_Type = {
+// Python type for PyCus objects.
+PyTypeObject PyCus_Type = {
 #if PY_MAJOR_VERSION < 3
     PyObject_HEAD_INIT(nullptr) 0,  // ob_size
 #else
     PyVarObject_HEAD_INIT(nullptr, 0)
 #endif
-    "cus_type",                                // tp_name
-    sizeof(PyCusType),                        // tp_basicsize
+    "cus",                                // tp_name
+    sizeof(PyCus),                        // tp_basicsize
     0,                                         // tp_itemsize
     nullptr,                                   // tp_dealloc
     nullptr,                                   // tp_print
     nullptr,                                   // tp_getattr
     nullptr,                                   // tp_setattr
     nullptr,                                   // tp_compare / tp_reserved
-    PyCusType_Repr,                           // tp_repr
-    &PyCusType_AsNumber,                      // tp_as_number
+    PyCus_Repr,                           // tp_repr
+    &PyCus_AsNumber,                      // tp_as_number
     nullptr,                                   // tp_as_sequence
     nullptr,                                   // tp_as_mapping
-    PyCusType_Hash,                           // tp_hash
+    PyCus_Hash,                           // tp_hash
     nullptr,                                   // tp_call
-    PyCusType_Str,                            // tp_str
+    PyCus_Str,                            // tp_str
     nullptr,                                   // tp_getattro
     nullptr,                                   // tp_setattro
     nullptr,                                   // tp_as_buffer
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,  // tp_flags
-    "cus_type floating-point values",          // tp_doc
+    "cus floating-point values",          // tp_doc
     nullptr,                                   // tp_traverse
     nullptr,                                   // tp_clear
-    PyCusType_RichCompare,                    // tp_richcompare
+    PyCus_RichCompare,                    // tp_richcompare
     0,                                         // tp_weaklistoffset
     nullptr,                                   // tp_iter
     nullptr,                                   // tp_iternext
@@ -334,7 +334,7 @@ PyTypeObject PyCusType_Type = {
     0,                                         // tp_dictoffset
     nullptr,                                   // tp_init
     nullptr,                                   // tp_alloc
-    PyCusType_New,                            // tp_new
+    PyCus_New,                            // tp_new
     nullptr,                                   // tp_free
     nullptr,                                   // tp_is_gc
     nullptr,                                   // tp_bases
@@ -348,13 +348,13 @@ PyTypeObject PyCusType_Type = {
 
 // Numpy support
 
-PyArray_ArrFuncs NPyCusType_ArrFuncs;
+PyArray_ArrFuncs NPyCus_ArrFuncs;
 
-PyArray_Descr NPyCusType_Descr = {
-    PyObject_HEAD_INIT(nullptr) & PyCusType_Type,  // typeobj
-    // We must register cus_type with a kind other than "f", because numpy
+PyArray_Descr NPyCus_Descr = {
+    PyObject_HEAD_INIT(nullptr) & PyCus_Type,  // typeobj
+    // We must register cus with a kind other than "f", because numpy
     // considers two types with the same kind and size to be equal, but
-    // float16 != cus_type.
+    // float16 != cus.
     'V',  // kind
     // TODO(phawkins): there doesn't seem to be a way of guaranteeing a type
     // character is unique.
@@ -362,29 +362,29 @@ PyArray_Descr NPyCusType_Descr = {
     '=',                                                  // byteorder
     NPY_NEEDS_PYAPI | NPY_USE_GETITEM | NPY_USE_SETITEM,  // hasobject
     0,                                                    // type_num
-    sizeof(cus_type),                                     // elsize
-    alignof(cus_type),                                    // alignment
+    sizeof(cus),                                     // elsize
+    alignof(cus),                                    // alignment
     nullptr,                                              // subarray
     nullptr,                                              // fields
     nullptr,                                              // names
-    &NPyCusType_ArrFuncs,                                // f
+    &NPyCus_ArrFuncs,                                // f
 };
 
 // Registered numpy type ID. Global variable populated by the registration code.
-int npy_cus_type_ = -1;
+int npy_cus_ = -1;
 
 // Implementations of NumPy array methods.
 
-PyObject* NPyCusType_GetItem(void* data, void* arr) {
-  cus_type x;
-  memcpy(&x, data, sizeof(cus_type));
-  return PyCusType_FromCusType(x).release();
+PyObject* NPyCus_GetItem(void* data, void* arr) {
+  cus x;
+  memcpy(&x, data, sizeof(cus));
+  return PyCus_FromCus(x).release();
 }
 
-int NPyCusType_SetItem(PyObject* item, void* data, void* arr) {
-  cus_type x;
-  if (!AsCusType(item, &x)) return -1;
-  memcpy(data, &x, sizeof(cus_type));
+int NPyCus_SetItem(PyObject* item, void* data, void* arr) {
+  cus x;
+  if (!AsCus(item, &x)) return -1;
+  memcpy(data, &x, sizeof(cus));
   return 0;
 }
 
@@ -393,7 +393,7 @@ void ByteSwap16(void* value) {
   std::swap(p[0], p[1]);
 }
 
-void NPyCusType_CopySwapN(void* dstv, npy_intp dstride, void* srcv,
+void NPyCus_CopySwapN(void* dstv, npy_intp dstride, void* srcv,
                            npy_intp sstride, npy_intp n, int swap, void* arr) {
   char* dst = reinterpret_cast<char*>(dstv);
   char* src = reinterpret_cast<char*>(srcv);
@@ -415,7 +415,7 @@ void NPyCusType_CopySwapN(void* dstv, npy_intp dstride, void* srcv,
   }
 }
 
-void NPyCusType_CopySwap(void* dst, void* src, int swap, void* arr) {
+void NPyCus_CopySwap(void* dst, void* src, int swap, void* arr) {
   if (!src) {
     return;
   }
@@ -425,18 +425,18 @@ void NPyCusType_CopySwap(void* dst, void* src, int swap, void* arr) {
   }
 }
 
-npy_bool NPyCusType_NonZero(void* data, void* arr) {
-  cus_type x;
+npy_bool NPyCus_NonZero(void* data, void* arr) {
+  cus x;
   memcpy(&x, data, sizeof(x));
-  return x != static_cast<cus_type>(0);
+  return x != static_cast<cus>(0);
 }
 
-int NPyCusType_Fill(void* buffer_raw, npy_intp length, void* ignored) {
-  cus_type* const buffer = reinterpret_cast<cus_type*>(buffer_raw);
+int NPyCus_Fill(void* buffer_raw, npy_intp length, void* ignored) {
+  cus* const buffer = reinterpret_cast<cus*>(buffer_raw);
   const float start(buffer[0]);
   const float delta = static_cast<float>(buffer[1]) - start;
   for (npy_intp i = 2; i < length; ++i) {
-    buffer[i] = static_cast<cus_type>(start + i * delta);
+    buffer[i] = static_cast<cus>(start + i * delta);
   }
   return 0;
 }
@@ -454,20 +454,20 @@ void NPyCast(void* from_void, void* to_void, npy_intp n, void* fromarr,
   }
 }
 
-// Registers a cast between cus_type and type 'T'. 'numpy_type' is the NumPy
-// type corresponding to 'T'. If 'cast_is_safe', registers that cus_type can be
+// Registers a cast between cus and type 'T'. 'numpy_type' is the NumPy
+// type corresponding to 'T'. If 'cast_is_safe', registers that cus can be
 // safely coerced to T.
 template <typename T>
-bool RegisterCusTypeCast(int numpy_type, bool cast_is_safe) {
-  if (PyArray_RegisterCastFunc(PyArray_DescrFromType(numpy_type), npy_cus_type_,
-                               NPyCast<T, cus_type>) < 0) {
+bool RegisterCusCast(int numpy_type, bool cast_is_safe) {
+  if (PyArray_RegisterCastFunc(PyArray_DescrFromType(numpy_type), npy_cus_,
+                               NPyCast<T, cus>) < 0) {
     return false;
   }
-  if (PyArray_RegisterCastFunc(&NPyCusType_Descr, numpy_type,
-                               NPyCast<cus_type, T>) < 0) {
+  if (PyArray_RegisterCastFunc(&NPyCus_Descr, numpy_type,
+                               NPyCast<cus, T>) < 0) {
     return false;
   }
-  if (cast_is_safe && PyArray_RegisterCanCast(&NPyCusType_Descr, numpy_type,
+  if (cast_is_safe && PyArray_RegisterCanCast(&NPyCus_Descr, numpy_type,
                                               NPY_NOSCALAR) < 0) {
     return false;
   }
@@ -493,26 +493,26 @@ void BinaryUFunc(char** args, npy_intp* dimensions, npy_intp* steps,
 template <typename Functor>
 void CompareUFunc(char** args, npy_intp* dimensions, npy_intp* steps,
                   void* data) {
-  BinaryUFunc<cus_type, npy_bool, Functor>(args, dimensions, steps, data);
+  BinaryUFunc<cus, npy_bool, Functor>(args, dimensions, steps, data);
 }
 
-struct CusTypeEqFunctor {
-  npy_bool operator()(cus_type a, cus_type b) { return a == b; }
+struct CusEqFunctor {
+  npy_bool operator()(cus a, cus b) { return a == b; }
 };
-struct CusTypeNeFunctor {
-  npy_bool operator()(cus_type a, cus_type b) { return a != b; }
+struct CusNeFunctor {
+  npy_bool operator()(cus a, cus b) { return a != b; }
 };
-struct CusTypeLtFunctor {
-  npy_bool operator()(cus_type a, cus_type b) { return a < b; }
+struct CusLtFunctor {
+  npy_bool operator()(cus a, cus b) { return a < b; }
 };
-struct CusTypeGtFunctor {
-  npy_bool operator()(cus_type a, cus_type b) { return a > b; }
+struct CusGtFunctor {
+  npy_bool operator()(cus a, cus b) { return a > b; }
 };
-struct CusTypeLeFunctor {
-  npy_bool operator()(cus_type a, cus_type b) { return a <= b; }
+struct CusLeFunctor {
+  npy_bool operator()(cus a, cus b) { return a <= b; }
 };
-struct CusTypeGeFunctor {
-  npy_bool operator()(cus_type a, cus_type b) { return a >= b; }
+struct CusGeFunctor {
+  npy_bool operator()(cus a, cus b) { return a >= b; }
 };
 
 // Initializes the module.
@@ -530,60 +530,60 @@ bool Initialize() {
   }
 
   // We hit a mysterious crash if we haven't initialized numpy before this:
-  PyCusType_Type.tp_base = &PyGenericArrType_Type;
+  PyCus_Type.tp_base = &PyGenericArrType_Type;
 
-  if (PyType_Ready(&PyCusType_Type) < 0) {
+  if (PyType_Ready(&PyCus_Type) < 0) {
     return false;
   }
 
   // Initializes the NumPy descriptor.
-  PyArray_InitArrFuncs(&NPyCusType_ArrFuncs);
-  NPyCusType_ArrFuncs.getitem = NPyCusType_GetItem;
-  NPyCusType_ArrFuncs.setitem = NPyCusType_SetItem;
-  NPyCusType_ArrFuncs.copyswapn = NPyCusType_CopySwapN;
-  NPyCusType_ArrFuncs.copyswap = NPyCusType_CopySwap;
-  NPyCusType_ArrFuncs.nonzero = NPyCusType_NonZero;
-  NPyCusType_ArrFuncs.fill = NPyCusType_Fill;
+  PyArray_InitArrFuncs(&NPyCus_ArrFuncs);
+  NPyCus_ArrFuncs.getitem = NPyCus_GetItem;
+  NPyCus_ArrFuncs.setitem = NPyCus_SetItem;
+  NPyCus_ArrFuncs.copyswapn = NPyCus_CopySwapN;
+  NPyCus_ArrFuncs.copyswap = NPyCus_CopySwap;
+  NPyCus_ArrFuncs.nonzero = NPyCus_NonZero;
+  NPyCus_ArrFuncs.fill = NPyCus_Fill;
 
-  Py_TYPE(&NPyCusType_Descr) = &PyArrayDescr_Type;
-  npy_cus_type_ = PyArray_RegisterDataType(&NPyCusType_Descr);
-  if (npy_cus_type_ < 0) return false;
+  Py_TYPE(&NPyCus_Descr) = &PyArrayDescr_Type;
+  npy_cus_ = PyArray_RegisterDataType(&NPyCus_Descr);
+  if (npy_cus_ < 0) return false;
 
-  // Support dtype(cus_type)
-  if (PyDict_SetItemString(PyCusType_Type.tp_dict, "dtype",
-                           reinterpret_cast<PyObject*>(&NPyCusType_Descr)) <
+  // Support dtype(cus)
+  if (PyDict_SetItemString(PyCus_Type.tp_dict, "dtype",
+                           reinterpret_cast<PyObject*>(&NPyCus_Descr)) <
       0) {
     return false;
   }
 
   // Register casts
 
-  // We lie shamelessly and say that a cast from half to cus_type is safe.
+  // We lie shamelessly and say that a cast from half to cus is safe.
   // Numpy frequently uses the smallest legal representation type for small
   // float constants (e.g., 1.0), which is often float16. Things break if these
-  // cannot be converted transparently to cus_type.
-  if (!RegisterCusTypeCast<Eigen::half>(NPY_HALF, /*cast_is_safe=*/true)) {
+  // cannot be converted transparently to cus.
+  if (!RegisterCusCast<Eigen::half>(NPY_HALF, /*cast_is_safe=*/true)) {
     return false;
   }
 
-  if (!RegisterCusTypeCast<float>(NPY_FLOAT, /*cast_is_safe=*/true)) {
+  if (!RegisterCusCast<float>(NPY_FLOAT, /*cast_is_safe=*/true)) {
     return false;
   }
-  if (!RegisterCusTypeCast<double>(NPY_DOUBLE, /*cast_is_safe=*/true)) {
+  if (!RegisterCusCast<double>(NPY_DOUBLE, /*cast_is_safe=*/true)) {
     return false;
   }
-  if (!RegisterCusTypeCast<int32>(NPY_INT32, /*cast_is_safe=*/false)) {
+  if (!RegisterCusCast<int32>(NPY_INT32, /*cast_is_safe=*/false)) {
     return false;
   }
-  if (!RegisterCusTypeCast<int64>(NPY_INT64, /*cast_is_safe=*/false)) {
+  if (!RegisterCusCast<int64>(NPY_INT64, /*cast_is_safe=*/false)) {
     return false;
   }
   // Following the numpy convention. imag part is dropped when converting to
   // float.
-  if (!RegisterCusTypeCast<complex64>(NPY_COMPLEX64, /*cast_is_safe=*/true)) {
+  if (!RegisterCusCast<complex64>(NPY_COMPLEX64, /*cast_is_safe=*/true)) {
     return false;
   }
-  if (!RegisterCusTypeCast<complex128>(NPY_COMPLEX128,
+  if (!RegisterCusCast<complex128>(NPY_COMPLEX128,
                                         /*cast_is_safe=*/true)) {
     return false;
   }
@@ -603,7 +603,7 @@ bool Initialize() {
                    ufunc->nargs, types.size());
       return false;
     }
-    if (PyUFunc_RegisterLoopForType(ufunc, npy_cus_type_, fn,
+    if (PyUFunc_RegisterLoopForType(ufunc, npy_cus_, fn,
                                     const_cast<int*>(types.data()),
                                     nullptr) < 0) {
       return false;
@@ -613,28 +613,28 @@ bool Initialize() {
 
   // Comparisons
   const std::array<int, 3> compare_types = {
-      {npy_cus_type_, npy_cus_type_, NPY_BOOL}};
+      {npy_cus_, npy_cus_, NPY_BOOL}};
 
-  if (!register_ufunc("equal", CompareUFunc<CusTypeEqFunctor>,
+  if (!register_ufunc("equal", CompareUFunc<CusEqFunctor>,
                       compare_types)) {
     return false;
   }
-  if (!register_ufunc("not_equal", CompareUFunc<CusTypeNeFunctor>,
+  if (!register_ufunc("not_equal", CompareUFunc<CusNeFunctor>,
                       compare_types)) {
     return false;
   }
-  if (!register_ufunc("less", CompareUFunc<CusTypeLtFunctor>, compare_types)) {
+  if (!register_ufunc("less", CompareUFunc<CusLtFunctor>, compare_types)) {
     return false;
   }
-  if (!register_ufunc("greater", CompareUFunc<CusTypeGtFunctor>,
+  if (!register_ufunc("greater", CompareUFunc<CusGtFunctor>,
                       compare_types)) {
     return false;
   }
-  if (!register_ufunc("less_equal", CompareUFunc<CusTypeLeFunctor>,
+  if (!register_ufunc("less_equal", CompareUFunc<CusLeFunctor>,
                       compare_types)) {
     return false;
   }
-  if (!register_ufunc("greater_equal", CompareUFunc<CusTypeGeFunctor>,
+  if (!register_ufunc("greater_equal", CompareUFunc<CusGeFunctor>,
                       compare_types)) {
     return false;
   }
@@ -643,28 +643,28 @@ bool Initialize() {
 
 }  // namespace
 
-void RegisterNumpyCusType() {
-  if (npy_cus_type_ >= 0) {
+void RegisterNumpyCus() {
+  if (npy_cus_ >= 0) {
     // Already initialized.
     return;
   }
   if (!Initialize()) {
     if (!PyErr_Occurred()) {
-      PyErr_SetString(PyExc_RuntimeError, "cannot load cus_type module.");
+      PyErr_SetString(PyExc_RuntimeError, "cannot load cus module.");
     }
     PyErr_Print();
   }
 }
 
-PyObject* CusTypePyType() {
-  CHECK(PyCusType_Type.tp_base != nullptr);
-  Py_INCREF(&PyCusType_Type);
-  return reinterpret_cast<PyObject*>(&PyCusType_Type);
+PyObject* CusPyType() {
+  CHECK(PyCus_Type.tp_base != nullptr);
+  Py_INCREF(&PyCus_Type);
+  return reinterpret_cast<PyObject*>(&PyCus_Type);
 }
 
-int CusTypeNumpyType() {
-  CHECK_GE(npy_cus_type_, 0);
-  return npy_cus_type_;
+int CusNumpyType() {
+  CHECK_GE(npy_cus_, 0);
+  return npy_cus_;
 }
 
 }  // namespace tensorflow

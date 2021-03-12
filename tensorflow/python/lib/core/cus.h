@@ -21,13 +21,13 @@ limitations under the License.
 namespace tensorflow {
 
 // Register the Cus numpy type.
-void RegisterNumpyCusType();
+void RegisterNumpyCus();
 
 // Returns the PyObject for the cus type.
-PyObject* CusTypePyType();
+PyObject* CusPyType();
 
 // Returns the id number of the Cus numpy type.
-int CusTypeNumpyType();
+int CusNumpyType();
 
 }  // namespace tensorflow
 

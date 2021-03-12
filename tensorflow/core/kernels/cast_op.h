@@ -18,7 +18,7 @@ limitations under the License.
 
 #include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
 #include "tensorflow/core/framework/bfloat16.h"
-#include "tensorflow/core/framework/cus_type.h"
+#include "tensorflow/core/framework/cus.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
@@ -74,7 +74,7 @@ limitations under the License.
   SPECIALIZE_CAST(devname, Eigen::half, std::complex<double>)         \
   SPECIALIZE_CAST(devname, Eigen::half, std::complex<float>)          \
   SPECIALIZE_CAST(devname, bfloat16, float)                           \
-  SPECIALIZE_CAST(devname, cus_type, float)                           \
+  SPECIALIZE_CAST(devname, cus, float)                           \
   template <typename OUT_TYPE, typename IN_OUT>                       \
   struct CastFunctor<devname, OUT_TYPE, IN_OUT> {                     \
     void operator()(const devname& d,                                 \
@@ -139,7 +139,7 @@ constexpr int MantissaWidth<bfloat16>() {
 }
 
 template <>
-constexpr int MantissaWidth<cus_type>() {
+constexpr int MantissaWidth<cus>() {
   // Remember, there's 1 hidden bit
   return 7 + 1;   // 23 + 1?
 }

@@ -175,7 +175,7 @@ filegroup(
         "allocator_registry.h",
         "attr_value_util.h",
         "bfloat16.h",
-        "cus_type.h",
+        "cus.h",
         "bounds_check.h",
         "cancellation.h",
         "collective.h",
@@ -299,8 +299,8 @@ filegroup(
         "allocator_registry.h",
         "bfloat16.cc",
         "bfloat16.h",
-        "cus_type.h",
-        "cus_type.cc",
+        "cus.h",
+        "cus.cc",
         "bounds_check.h",
         "cpu_allocator_impl.cc",
         "kernel_shape_util.cc",
@@ -639,9 +639,9 @@ cc_library(
 )
 
 cc_library(
-    name = "cus_type",
-    srcs = ["cus_type.cc"],
-    hdrs = ["cus_type.h"],
+    name = "cus",
+    srcs = ["cus.cc"],
+    hdrs = ["cus.h"],
     visibility = ["//tensorflow/core:__subpackages__"],
     deps = [
         ":numeric_types",
@@ -777,7 +777,7 @@ tf_cuda_library(
         ":allocation_description_proto_cc",
         ":allocator",
         ":bfloat16",
-        ":cus_type",
+        ":cus",
         ":log_memory_proto_cc",
         ":numeric_types",
         ":resource_handle",

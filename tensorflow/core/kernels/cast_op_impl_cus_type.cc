@@ -33,9 +33,9 @@ CastFunctorType GetGpuCastFromBfloat(DataType dst_dtype) {
   if (dst_dtype == DT_FLOAT) {
     return [](OpKernelContext* ctx, const Tensor& inp, Tensor* out,
               bool truncate) {
-      functor::CastFunctor<GPUDevice, float, cus_type> func;
+      functor::CastFunctor<GPUDevice, float, cus> func;
       func(ctx->eigen_device<GPUDevice>(), out->flat<float>(),
-           inp.flat<cus_type>(), truncate);
+           inp.flat<cus>(), truncate);
     };
   }
   return nullptr;

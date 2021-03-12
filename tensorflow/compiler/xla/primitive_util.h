@@ -125,7 +125,7 @@ inline PrimitiveType NativeToPrimitiveType<bfloat16>() {
 }
 
 template <>
-inline PrimitiveType NativeToPrimitiveType<cus_type>() {
+inline PrimitiveType NativeToPrimitiveType<cus>() {
   return CUS;
 }
 
@@ -239,7 +239,7 @@ struct PrimitiveTypeToNative<BF16> {
 
 template <>
 struct PrimitiveTypeToNative<CUS> {
-  using type = cus_type;
+  using type = cus;
 };
 
 // Complex

@@ -85,8 +85,8 @@ xla::StatusOr<py::dtype> PrimitiveTypeToDtype(PrimitiveType type) {
       return py::dtype::from_args(bfloat16);
     }
     case CUS: {
-      TF_ASSIGN_OR_RETURN(py::object cus_type, CusTypeDtype());
-      return py::dtype::from_args(cus_type);
+      TF_ASSIGN_OR_RETURN(py::object cus, CusDtype());
+      return py::dtype::from_args(cus);
     }
     case F16:
       return py::dtype("e");  // PEP 3118 code for "float16
@@ -240,7 +240,17 @@ StatusOr<py::object> LiteralToPython(std::shared_ptr<xla::Literal> literal) {
         PyArray_View(reinterpret_cast<PyArrayObject*>(array.ptr()),
                      reinterpret_cast<PyArray_Descr*>(bfloat16.release().ptr()),
                      static_cast<PyTypeObject*>(nullptr)));
+  } else if (m.shape().element_type() == xla::CUS) {
+    // We requested an array of uint16 since NumPy doesn't know how
+    // to produce our custom type. Reinterpret the array as cus
+    // before handing it back to the caller.
+    TF_ASSIGN_OR_RETURN(py::object cus, CusDtype());
+    array = py::reinterpret_steal<py::array>(
+        PyArray_View(reinterpret_cast<PyArrayObject*>(array.ptr()),
+                     reinterpret_cast<PyArray_Descr*>(cus.release().ptr()),
+                     static_cast<PyTypeObject*>(nullptr)));
   }
+
   return array;
 }
 

@@ -6,9 +6,15 @@ os.environ['TF_DUMP_GRAPH_PREFIX'] = '/tmp/tf_graphs/'
 import numpy as np
 import tensorflow as tf
 
-a = np.arange(1, 10, dtype=tf.bfloat16)
+# a = tf.constant([1.8, 2.2], dtype=tf.bfloat16)
 
-b = np.arange(1, 10, dtype=tf.bfloat16)
+# a = tf.constant([1.8, 2.2], dtype=tf.cus)
+a = tf.cast(np.arange(1,10), tf.cus)
+
+# b = tf.constant([1.8, 2.2], dtype=tf.cus)
+b = tf.constant([1.8, 2.2], dtype=tf.bfloat16)
+
+# b = tf.cast(np.arange(1,10), tf.cus)
 
 # inp = np.random.rand(10, 10)
 

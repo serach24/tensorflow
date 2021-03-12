@@ -28,91 +28,91 @@ namespace tensorflow {
 typedef std::complex<float> complex64;
 typedef std::complex<double> complex128;
 
-struct cus_type {
+struct cus {
   float value;
 
   void set(float f) { value = f; }
-  cus_type(){}
+  cus(){}
   
-  explicit cus_type(const float f) : value(f) {}
-  explicit cus_type(const double d) : cus_type(static_cast<float>(d)) {}
-  explicit cus_type(const complex64 c64) : cus_type(c64.real()) {}
-  explicit cus_type(const complex128 c128) : cus_type(static_cast<float>(c128.real())) {}
+  explicit cus(const float f) : value(f) {}
+  explicit cus(const double d) : cus(static_cast<float>(d)) {}
+  explicit cus(const complex64 c64) : cus(c64.real()) {}
+  explicit cus(const complex128 c128) : cus(static_cast<float>(c128.real())) {}
 
   template<class T>
-  explicit cus_type(const T& value) : cus_type(static_cast<float>(value)) {}
+  explicit cus(const T& value) : cus(static_cast<float>(value)) {}
 
 
-  operator float() const { return (float)value; }
+  operator float() const { return value; }
 
-  inline cus_type& operator=(float i) { 
+  inline cus& operator=(float i) { 
     this->set(i);
     return *this;
   }
 
-  inline cus_type& operator=(const cus_type& a){
+  inline cus& operator=(const cus& a){
     this->set(static_cast<float>(a));
     return *this;
   }
 };
 
-inline cus_type operator+(const cus_type & a, const cus_type & b){
-  return cus_type(static_cast<float>(a) + static_cast<float>(b));
+inline cus operator+(const cus & a, const cus & b){
+  return cus(static_cast<float>(a) + static_cast<float>(b));
 }
 
-inline cus_type operator-(const cus_type & a, const cus_type & b){
-  return cus_type(static_cast<float>(a) - static_cast<float>(b));
+inline cus operator-(const cus & a, const cus & b){
+  return cus(static_cast<float>(a) - static_cast<float>(b));
 }
 
-inline cus_type operator*(const cus_type & a, const cus_type & b){
-  return cus_type(static_cast<float>(a) * static_cast<float>(b));
+inline cus operator*(const cus & a, const cus & b){
+  return cus(static_cast<float>(a) * static_cast<float>(b));
 }
 
-inline cus_type operator/(const cus_type & a, const cus_type & b){
-  return cus_type(static_cast<float>(a) / static_cast<float>(b));
+inline cus operator/(const cus & a, const cus & b){
+  return cus(static_cast<float>(a) / static_cast<float>(b));
 }
 
-inline cus_type operator+=(cus_type & a, const cus_type & b){
+inline cus operator+=(cus & a, const cus & b){
   a = a + b;
   return a;
 }
 
-inline cus_type operator-=(cus_type & a, const cus_type & b){
+inline cus operator-=(cus & a, const cus & b){
   a = a - b;
   return a;
 }
 
-inline cus_type operator*=(cus_type & a, const cus_type & b){
+inline cus operator*=(cus & a, const cus & b){
   a = a * b;
   return a;
 }
 
-inline cus_type operator/=(cus_type & a, const cus_type & b){
+inline cus operator/=(cus & a, const cus & b){
   a = a / b;
   return a;
 }
 
-inline bool operator<(const cus_type & a, const cus_type & b){
+inline bool operator<(const cus & a, const cus & b){
   return static_cast<float>(a) < static_cast<float>(b);
 }
 
-inline bool operator<=(const cus_type & a, const cus_type & b){
+inline bool operator<=(const cus & a, const cus & b){
   return static_cast<float>(a) <= static_cast<float>(b);
 }
 
-inline bool operator==(const cus_type & a, const cus_type & b){
+inline bool operator==(const cus & a, const cus & b){
   return static_cast<float>(a) == static_cast<float>(b);
 }
 
-inline bool operator!=(const cus_type & a, const cus_type & b){
+inline bool operator!=(const cus & a, const cus & b){
   return static_cast<float>(a) != static_cast<float>(b);
 }
 
-inline bool operator>(const cus_type & a, const cus_type & b){
+inline bool operator>(const cus & a, const cus & b){
   return static_cast<float>(a) > static_cast<float>(b);
 }
 
-inline bool operator>=(const cus_type & a, const cus_type & b){
+inline bool operator>=(const cus & a, const cus & b){
   return static_cast<float>(a) >= static_cast<float>(b);
 }
 

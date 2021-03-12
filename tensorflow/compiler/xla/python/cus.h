@@ -7,7 +7,7 @@
 
 namespace xla {
 
-xla::StatusOr<pybind11::object> CusTypeDtype();
+xla::StatusOr<pybind11::object> CusDtype();
 
 }  // namespace xla
 

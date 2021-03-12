@@ -27,7 +27,7 @@ limitations under the License.
 #include "third_party/eigen3/unsupported/Eigen/CXX11/FixedPoint"
 // clang-format on
 #include "tensorflow/core/framework/bfloat16.h"
-#include "tensorflow/core/framework/cus_type.h"
+#include "tensorflow/core/framework/cus.h"
 #include "tensorflow/core/framework/numeric_types.h"
 #include "tensorflow/core/framework/resource_handle.h"
 #include "tensorflow/core/framework/types.pb.h"
@@ -397,7 +397,7 @@ MATCH_TYPE_AND_ENUM(qint16, DT_QINT16);
 MATCH_TYPE_AND_ENUM(quint16, DT_QUINT16);
 MATCH_TYPE_AND_ENUM(qint32, DT_QINT32);
 MATCH_TYPE_AND_ENUM(bfloat16, DT_BFLOAT16);
-MATCH_TYPE_AND_ENUM(cus_type, DT_CUS);
+MATCH_TYPE_AND_ENUM(cus, DT_CUS);
 MATCH_TYPE_AND_ENUM(Eigen::half, DT_HALF);
 MATCH_TYPE_AND_ENUM(ResourceHandle, DT_RESOURCE);
 MATCH_TYPE_AND_ENUM(Variant, DT_VARIANT);

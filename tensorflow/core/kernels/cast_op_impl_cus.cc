@@ -10,7 +10,7 @@ typedef Eigen::GpuDevice GPUDevice;
 
 // todo(chenhao) neglect cpu for now
 CastFunctorType GetCpuCastFromCus(DataType dst_dtype) {
-  CURRY_TYPES3(CAST_CASE, CPUDevice, cus_type);
+  CURRY_TYPES3(CAST_CASE, CPUDevice, cus);
   return nullptr;
 }
 
@@ -20,9 +20,9 @@ CastFunctorType GetGpuCastFromCus(DataType dst_dtype) {
   if (dst_dtype == DT_FLOAT) {
     return [](OpKernelContext* ctx, const Tensor& inp, Tensor* out,
               bool truncate) {
-      functor::CastFunctor<GPUDevice, float, cus_type> func;
+      functor::CastFunctor<GPUDevice, float, cus> func;
       func(ctx->eigen_device<GPUDevice>(), out->flat<float>(),
-           inp.flat<cus_type>(), truncate);
+           inp.flat<cus>(), truncate);
     };
   }
   return nullptr;

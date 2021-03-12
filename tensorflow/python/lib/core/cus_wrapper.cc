@@ -14,11 +14,11 @@ limitations under the License.
 ==============================================================================*/
 
 #include "pybind11/pybind11.h"
-#include "tensorflow/python/lib/core/cus_type.h"
+#include "tensorflow/python/lib/core/cus.h"
 
-PYBIND11_MODULE(_pywrap_cus_type, m) {
-  tensorflow::RegisterNumpyCusType();
+PYBIND11_MODULE(_pywrap_cus, m) {
+  tensorflow::RegisterNumpyCus();
 
-  m.def("TF_cus_type",
-        [] { return pybind11::handle(tensorflow::CusTypePyType()); });
+  m.def("TF_cus",
+        [] { return pybind11::handle(tensorflow::CusPyType()); });
 }

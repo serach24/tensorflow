@@ -39,7 +39,6 @@ xla::XlaOp Zeros(xla::XlaBuilder* builder, const xla::Shape& shape) {
 xla::XlaOp FloatLiteral(xla::XlaBuilder* builder, xla::PrimitiveType type,
                         double value) {
   switch (type) {
-    //todo(chenhao) might need to add cus here
     case xla::F16:
       return xla::ConstantR0<xla::half>(builder, static_cast<xla::half>(value));
       break;
@@ -47,7 +46,7 @@ xla::XlaOp FloatLiteral(xla::XlaBuilder* builder, xla::PrimitiveType type,
       return xla::ConstantR0<bfloat16>(builder, static_cast<bfloat16>(value));
       break;
     case xla::CUS:
-      return xla::ConstantR0<cus_type>(builder, static_cast<cus_type>(value));
+      return xla::ConstantR0<cus>(builder, static_cast<cus>(value));
       break;
     case xla::F32:
       return xla::ConstantR0<float>(builder, static_cast<float>(value));
@@ -111,6 +110,10 @@ xla::XlaOp IntegerLiteral(xla::XlaBuilder* builder, xla::PrimitiveType type,
     case xla::BF16:
       literal =
           xla::LiteralUtil::CreateR0<bfloat16>(static_cast<bfloat16>(value));
+      break;
+    case xla::CUS:
+      literal =
+          xla::LiteralUtil::CreateR0<cus>(static_cast<cus>(value));
       break;
     case xla::F16:
       literal =

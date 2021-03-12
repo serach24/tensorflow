@@ -527,9 +527,9 @@ cc_library(
 )
 
 cc_library(
-    name = "cus_type_lib",
-    srcs = ["lib/core/cus_type.cc"],
-    hdrs = ["lib/core/cus_type.h"],
+    name = "cus_lib",
+    srcs = ["lib/core/cus.cc"],
+    hdrs = ["lib/core/cus.h"],
     deps = [
         ":numpy_lib",
         ":safe_ptr",
@@ -551,10 +551,10 @@ tf_python_pybind_extension(
 )
 
 tf_python_pybind_extension(
-    name = "_pywrap_cus_type",
-    srcs = ["lib/core/cus_type_wrapper.cc"],
-    hdrs = ["lib/core/cus_type.h"],
-    module_name = "_pywrap_cus_type",
+    name = "_pywrap_cus",
+    srcs = ["lib/core/cus_wrapper.cc"],
+    hdrs = ["lib/core/cus.h"],
+    module_name = "_pywrap_cus",
     deps = [
         "//third_party/python_runtime:headers",
         "@pybind11",
@@ -597,7 +597,7 @@ cc_library(
     ),
     deps = [
         ":bfloat16_lib",
-        ":cus_type_lib",
+        ":cus_lib",
         ":numpy_lib",
         "//tensorflow/c:c_api_no_xla",
         "//tensorflow/core:lib",
@@ -1079,7 +1079,7 @@ cc_library(
     name = "ndarray_tensor_headers",
     hdrs = [
         "lib/core/bfloat16.h",
-        "lib/core/cus_type.h",
+        "lib/core/cus.h",
         "lib/core/ndarray_tensor.h",
         "lib/core/ndarray_tensor_bridge.h",
         "lib/core/numpy.h",
@@ -1114,7 +1114,7 @@ cc_library(
     ]),
     deps = [
         ":bfloat16_lib",
-        ":cus_type_lib",
+        ":cus_lib",
         ":ndarray_tensor_bridge",
         ":numpy_lib",
         ":safe_ptr",
@@ -1513,7 +1513,7 @@ py_library(
     deps = [
         ":_dtypes",
         ":_pywrap_bfloat16",
-        ":_pywrap_cus_type",
+        ":_pywrap_cus",
         ":pywrap_tensorflow",
         "//tensorflow/core:protos_all_py",
     ],
@@ -6103,7 +6103,7 @@ pywrap_tensorflow_macro(
     }),
     deps = [
         ":bfloat16_lib",
-        ":cus_type_lib",
+        ":cus_lib",
         ":cost_analyzer_lib",
         ":model_analyzer_lib",
         ":cpp_python_util",
@@ -6183,7 +6183,7 @@ filegroup(
     name = "win_lib_files_for_exported_symbols",
     srcs = [
         ":bfloat16_lib",  # bfloat16
-        ":cus_type_lib",  # cus_type
+        ":cus_lib",  # cus
         ":cost_analyzer_lib",  # cost_analyzer
         ":cpp_python_util",  # util
         ":kernel_registry",  # kernel_registry
@@ -7634,7 +7634,7 @@ cc_library(
         "lib/core/py_exception_registry.h",
         "lib/core/pybind11_status.h",
         "lib/core/bfloat16.h",
-        "lib/core/cus_type.h",
+        "lib/core/cus.h",
         "lib/core/ndarray_tensor.h",
         "lib/core/ndarray_tensor_bridge.h",
         "lib/core/safe_ptr.h",
