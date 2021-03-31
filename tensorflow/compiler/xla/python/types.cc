@@ -46,6 +46,7 @@ xla::StatusOr<PrimitiveType> DtypeToPrimitiveType(const py::dtype& np_type) {
           {{'u', 4}, U32},
           {{'u', 8}, U64},
           {{'V', 2}, BF16},  // array protocol code for raw data (void*)
+          {{'V', 4}, CUS),
           {{'f', 2}, F16},
           {{'f', 4}, F32},
           {{'f', 8}, F64},
@@ -127,6 +128,8 @@ StatusOr<std::string> FormatDescriptorForPrimitiveType(PrimitiveType type) {
       return py::format_descriptor<uint64>::format();
     case BF16:
       return std::string("H");  // PEP 3118 code for "unsigned int16"
+    case CUS:
+      return std::string("H");  // todo(chenhao)
     case F16:
       return std::string("e");  // PEP 3118 code for "float16"
     case F32:

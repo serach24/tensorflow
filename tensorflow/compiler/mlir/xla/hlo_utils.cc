@@ -23,6 +23,7 @@ limitations under the License.
 #include "mlir/IR/TypeUtilities.h"  // from @llvm-project
 #include "tensorflow/compiler/xla/literal.h"
 #include "tensorflow/core/platform/bfloat16.h"
+// #include "tensorflow/core/platform/cus.h"
 #include "tensorflow/core/platform/logging.h"
 
 namespace xla {
@@ -122,6 +123,8 @@ StatusOr<mlir::DenseElementsAttr> CreateDenseElementsAttrFromLiteral(
       return CreateDenseAttrFrom16BitFloat<half>(type, literal);
     case PrimitiveType::BF16:
       return CreateDenseAttrFrom16BitFloat<bfloat16>(type, literal);
+    // case PrimitiveType::CUS:
+    //   return CreateDenseAttrFrom16BitFloat<cus>(type, literal);
     case PrimitiveType::F32:
       return CreateDenseAttrFromLiteral<float>(type, literal);
     case PrimitiveType::F64:
@@ -170,6 +173,8 @@ StatusOr<mlir::Type> ConvertPrimitiveTypeToMLIRType(PrimitiveType element_type,
       return builder.getF16Type();
     case PrimitiveType::BF16:
       return builder.getBF16Type();
+    // case PrimitiveType::CUS:
+    //   return builder.getCUSType();
     case PrimitiveType::F32:
       return builder.getF32Type();
     case PrimitiveType::F64:

@@ -1089,9 +1089,9 @@ inline float PrintOneElement(bfloat16 f, bool print_v2) {
   return static_cast<float>(f);
 }
 
-inline float PrintOneElement(cus f, bool print_v2) {
-  return static_cast<float>(f);
-}
+// inline float PrintOneElement(cus f, bool print_v2) {
+//   return static_cast<float>(f);
+// }
 
 // Print from left dim to right dim recursively.
 template <typename T>

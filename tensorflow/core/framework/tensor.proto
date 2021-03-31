@@ -48,6 +48,7 @@ message TensorProto {
 
   // DT_CUS todo(chenhao)
 
+
   // DT_FLOAT.
   repeated float float_val = 5 [packed = true];
 

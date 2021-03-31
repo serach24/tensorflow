@@ -93,7 +93,7 @@ Literal ConvertType(LiteralSlice literal) {
   return ConvertType<bfloat16, float>(bf16_literal);
 }
 
-/* static */ Literal LiteralUtil::ConvertCusToF32(
+/* static */ Literal LiteralUtil::ConvertCUSToF32(
     const LiteralSlice& cus_literal) {
   return ConvertType<cus, float>(cus_literal);
 }
@@ -103,7 +103,7 @@ Literal ConvertType(LiteralSlice literal) {
   return ConvertType<bfloat16, double>(bf16_literal);
 }
 
-/* static */ Literal LiteralUtil::ConvertCusToF64(
+/* static */ Literal LiteralUtil::ConvertCUSToF64(
     const LiteralSlice& cus_literal) {
   return ConvertType<cus, double>(cus_literal);
 }
@@ -113,7 +113,7 @@ Literal ConvertType(LiteralSlice literal) {
   return ConvertType<float, bfloat16>(f32_literal);
 }
 
-/* static */ Literal LiteralUtil::ConvertF32ToCus(
+/* static */ Literal LiteralUtil::ConvertF32ToCUS(
     const LiteralSlice& f32_literal) {
   return ConvertType<float, cus>(f32_literal);
 }
@@ -128,7 +128,7 @@ Literal ConvertType(LiteralSlice literal) {
   return ConvertType<double, bfloat16>(f64_literal);
 }
 
-/* static */ Literal LiteralUtil::ConvertF64ToCus(
+/* static */ Literal LiteralUtil::ConvertF64ToCUS(
     const LiteralSlice& f64_literal) {
   return ConvertType<double, cus>(f64_literal);
 }

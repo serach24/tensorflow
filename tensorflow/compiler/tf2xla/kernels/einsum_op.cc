@@ -25,8 +25,8 @@ limitations under the License.
 namespace tensorflow {
 namespace {
 
-constexpr std::array<DataType, 7> kEinsumTypes = {
-    {DT_INT32, DT_HALF, DT_BFLOAT16, DT_FLOAT, DT_DOUBLE, DT_COMPLEX64,
+constexpr std::array<DataType, 8> kEinsumTypes = {
+    {DT_INT32, DT_HALF, DT_BFLOAT16, DT_CUS, DT_FLOAT, DT_DOUBLE, DT_COMPLEX64,
      DT_COMPLEX128}};
 
 // Kernel which compiles XlaEinsum, an einsum op accepting two inputs.

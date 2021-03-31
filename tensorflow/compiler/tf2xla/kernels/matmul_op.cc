@@ -25,8 +25,8 @@ limitations under the License.
 namespace tensorflow {
 namespace {
 
-constexpr std::array<DataType, 6> kMatmulTypes = {
-    {DT_HALF, DT_BFLOAT16, DT_FLOAT, DT_DOUBLE, DT_COMPLEX64, DT_COMPLEX128}};
+constexpr std::array<DataType, 7> kMatmulTypes = {
+    {DT_HALF, DT_BFLOAT16, DT_CUS, DT_FLOAT, DT_DOUBLE, DT_COMPLEX64, DT_COMPLEX128}};
 
 class MatMulOp : public XlaOpKernel {
  public:
@@ -75,10 +75,10 @@ class MatMulOp : public XlaOpKernel {
     xla::XlaOp a = ctx->Input(0);
     xla::XlaOp b = ctx->Input(1);
     if (is_sparse_) {
-      if (a_type_ == DT_BFLOAT16) {
+      if (a_type_ == DT_BFLOAT16 || a_type_ == DT_CUS ) {
         a = xla::ConvertElementType(a, xla::F32);
       }
-      if (b_type_ == DT_BFLOAT16) {
+      if (b_type_ == DT_BFLOAT16 || b_type_ == DT_CUS) {
         b = xla::ConvertElementType(b, xla::F32);
       }
     }

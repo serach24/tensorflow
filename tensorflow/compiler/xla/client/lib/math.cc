@@ -149,6 +149,7 @@ XlaOp IsNegZero(XlaOp operand) {
       case F32:
         return Eq(BitcastConvertType(operand, U32),
                   ConstantR0WithType(&b, U32, uint32{1} << 31));
+      case CUS:
       case F16:
       case BF16:
         // Not all XLA backends handle U16 well, so we convert to F32/U32.
@@ -315,7 +316,7 @@ static XlaOp ErfImpl32(XlaOp x) {
   return x * EvaluatePolynomial<float>(x2, kAlpha) /
          EvaluatePolynomial<float>(x2, kBeta);
 }
-
+// todo(chenhao)
 XlaOp Erf(XlaOp x) {
   auto& b = *x.builder();
   return b.ReportErrorOrReturn([&]() -> StatusOr<XlaOp> {

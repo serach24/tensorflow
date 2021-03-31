@@ -430,8 +430,7 @@ StatusOr<llvm::Value*> ElementalIrEmitter::EmitFloatUnaryOp(
         return EmitF32ToBF16(operand_value, b_);
       }
       if (to_type == CUS) {
-        // Cast to F32 first. Other floating point formats are not supported by
-        // EmitReducePrecisionIR.
+        // Cast to F32 first.
         if (from_type != F32) {
           operand_value = b_->CreateFPCast(
               operand_value, llvm_ir::PrimitiveTypeToIrType(F32, module_));

@@ -401,6 +401,7 @@ Status CpuCompiler::RunHloPassesAfterLayoutAssn(
   }
 
   pipeline.AddPass<HloElementTypeConverter>(BF16, F32);
+  pipeline.AddPass<HloElementTypeConverter>(CUS, F32);
 
   // Outline ops in the entry computation into calls to subcomputations.
   const int max_parallelism =

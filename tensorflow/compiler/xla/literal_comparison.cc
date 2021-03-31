@@ -752,7 +752,7 @@ Status EqualHelper(const LiteralSlice& expected, const LiteralSlice& actual,
       case BF16:
         result = Equal<bfloat16>(expected, actual, index, 0, miscompared_ptr);
         break;
-      case BF16:
+      case CUS:
         result = Equal<cus>(expected, actual, index, 0, miscompared_ptr);
         break;
       case F16:
@@ -840,7 +840,7 @@ Status NearHelper(const LiteralSlice& expected, const LiteralSlice& actual,
                                                  error, use_detailed_message,
                                                  miscompare_callback);
         break;
-      case BF16:
+      case CUS:
         return NearComparator<cus>::Compare(expected, actual, shape_index,
                                                  error, use_detailed_message,
                                                  miscompare_callback);

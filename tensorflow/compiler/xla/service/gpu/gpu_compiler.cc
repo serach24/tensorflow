@@ -171,6 +171,7 @@ Status GpuCompiler::OptimizeHloModule(
     // support BF16 operations without directly implementing a BF16 lowering for
     // most ops.
     pipeline.AddPass<HloElementTypeConverter>(BF16, F32);
+    pipeline.AddPass<HloElementTypeConverter>(CUS, F32);
 
     // If cudnn batchnorms are enabled, rewrite batchnorm HLOs to cudnn calls
     // where possible.  Not every batchnorm op can be implemented as a call to
