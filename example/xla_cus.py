@@ -61,7 +61,7 @@ def model_fn(a):
     # b = tf.cast(a, tf.bfloat16)
     b = tf.cast(a, tf.cus)
     c = tf.add(b, b)
-    return tf.cast(c, tf.float32)
+    return c
 
 # @tf.function(experimental_compile=True)
 # def model_fn(a, b):

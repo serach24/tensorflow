@@ -27,7 +27,6 @@ limitations under the License.
 // definition to `tf_ops.td` and perform the modification there.
 //
 // Ops in this file are sorted alphabetically.
-// todo(chenhao)
 
 include "tensorflow/compiler/mlir/tensorflow/ir/tf_op_base.td"
 include "mlir/Interfaces/InferTypeOpInterface.td"

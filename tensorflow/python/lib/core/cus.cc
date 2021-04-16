@@ -407,6 +407,13 @@ int NPyCus_Compare(const void* a, const void* b, void* arr) {
     return 1;
   }
   // todo(chenhao) implement NaNs sort to the end.
+  // NaNs sort to the end.
+  if (!Eigen::numext::isnan(x) && Eigen::numext::isnan(y)) {
+    return -1;
+  }
+  if (Eigen::numext::isnan(x) && !Eigen::numext::isnan(y)) {
+    return 1;
+  }
   return 0;
 }
 

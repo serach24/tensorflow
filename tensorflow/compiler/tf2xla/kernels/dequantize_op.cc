@@ -90,7 +90,6 @@ class DequantizeOp : public XlaOpKernel {
     } else if (dtype_ == DT_CUS) {
       output = xla::ConvertElementType(output, xla::CUS);
     }
-    // todo(chenhao)
     ctx->SetOutput(0, output);
   }
 

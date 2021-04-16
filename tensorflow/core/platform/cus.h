@@ -39,7 +39,7 @@ typedef std::complex<float> complex64;
 typedef std::complex<double> complex128;
 
 struct cus {
-  float value;
+  uint32 a;
 
  public:
   void set(float f) { value = f; }
