@@ -244,8 +244,9 @@ StatusOr<py::object> LiteralToPython(std::shared_ptr<xla::Literal> literal) {
                      reinterpret_cast<PyArray_Descr*>(bfloat16.release().ptr()),
                      static_cast<PyTypeObject*>(nullptr)));
   } else if (m.shape().element_type() == xla::CUS) {
-    // We requested an array of uint16 since NumPy doesn't know how
-    // to produce our custom type. Reinterpret the array as cus
+    // todo(chenhao) 
+    // We requested an array of uint32 since NumPy doesn't know how
+    // to produce our cus type. Reinterpret the array as cus
     // before handing it back to the caller.
     TF_ASSIGN_OR_RETURN(py::object cus, CusDtype());
     array = py::reinterpret_steal<py::array>(

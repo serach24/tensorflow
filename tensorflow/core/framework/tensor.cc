@@ -821,7 +821,7 @@ bool Tensor::RefCountIsOne() const {
     CASE(quint16, SINGLE_ARG(STMTS))                           \
     CASE(qint16, SINGLE_ARG(STMTS))                            \
     CASE(bfloat16, SINGLE_ARG(STMTS))                          \
-    CASE(cus, SINGLE_ARG(STMTS))                          \
+    CASE(cus, SINGLE_ARG(STMTS))                               \
     CASE(Eigen::half, SINGLE_ARG(STMTS))                       \
     CASE(ResourceHandle, SINGLE_ARG(STMTS))                    \
     CASE(Variant, SINGLE_ARG(STMTS))                           \
@@ -1088,10 +1088,6 @@ inline float PrintOneElement(const Eigen::half& h, bool print_v2) {
 inline float PrintOneElement(bfloat16 f, bool print_v2) {
   return static_cast<float>(f);
 }
-
-// inline float PrintOneElement(cus f, bool print_v2) {
-//   return static_cast<float>(f);
-// }
 
 // Print from left dim to right dim recursively.
 template <typename T>

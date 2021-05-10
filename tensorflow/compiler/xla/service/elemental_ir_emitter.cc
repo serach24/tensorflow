@@ -210,16 +210,7 @@ StatusOr<llvm::Value*> EmitF32ToBF16(llvm::Value* f32_value,
 // todo(chenhao) dynamic cus
 StatusOr<llvm::Value*> EmitF32ToCus(llvm::Value* f32_value,
                                      llvm::IRBuilder<>* b) {
-  // TF_ASSIGN_OR_RETURN(
-  //     auto reduced_precision,
-  //     EmitReducePrecisionIR(
-  //         /*src_ty=*/F32, f32_value,
-  //         /*dest_exponent_bits=*/primitive_util::kBFloat16ExponentBits,
-  //         /*dest_mantissa_bits=*/primitive_util::kBFloat16MantissaBits, b));
-  // auto as_int32 = b->CreateBitCast(reduced_precision, b->getInt32Ty());
-  // auto shifted = b->CreateLShr(as_int32, 16);
-  // auto truncated = b->CreateTrunc(shifted, b->getInt16Ty());
-  return b->CreateBitCast(f32_value, b->getInt32Ty()); //todo(chenhao)
+  return b->CreateFPToUI(f32_value, b->getInt32Ty());
 }
 
 llvm::Value* EmitBF16ToF32(llvm::Value* bf16_value, llvm::IRBuilder<>* b) {

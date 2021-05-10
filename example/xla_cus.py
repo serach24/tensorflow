@@ -43,30 +43,18 @@ import tensorflow as tf
 
 # PID = os.getpid()
 
-
-
 # a = tf.constant([1.8, 2.2], dtype=tf.cus)
 
-# a = tf.cast(np.arange(1,10), tf.bfloat16)
-# a = tf.cast(np.arange(1,10), tf.cus)
 
-# b = tf.cast(np.arange(1,10), tf.bfloat16)
-
-
-a = tf.cast(np.arange(1, 10), tf.float32)
-
+npa = np.arange(1, 10, 1.3) # 1, 2.3, 3.6, 4.9, 6.2, 7.5, 8.8
+a = tf.cast(npa, tf.float32)
+# a = tf.cast(npa, tf.uint32)
 
 @tf.function(experimental_compile=True)
 def model_fn(a):
-    # b = tf.cast(a, tf.bfloat16)
     b = tf.cast(a, tf.cus)
     c = tf.add(b, b)
     return c
-
-# @tf.function(experimental_compile=True)
-# def model_fn(a, b):
-#     res = tf.add(a, b)
-#     return res
-
+    # return tf.cast(c, tf.float32)
 
 print(model_fn(a))

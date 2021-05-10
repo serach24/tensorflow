@@ -374,9 +374,8 @@ ShapeUtil::MakeShapeWithDescendingLayoutAndSamePhysicalLayout(
     case BF16:
     case F32:
     case F64:
-    case CUS:
       return true;
-
+    case CUS:
     case PRED:
     case U8:
     case U16:

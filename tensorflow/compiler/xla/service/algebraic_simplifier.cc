@@ -622,8 +622,7 @@ Status AlgebraicSimplifierVisitor::ScalarMultiplyReduction(
     HloInstruction* dot) {
   // We only process bfloat16 and float32 and cus for now.
   if (dot->shape().element_type() != BF16 &&
-      dot->shape().element_type() != F32 &&
-      dot->shape().element_type() != CUS) {
+      dot->shape().element_type() != F32 ){
     return Status::OK();
   }
 

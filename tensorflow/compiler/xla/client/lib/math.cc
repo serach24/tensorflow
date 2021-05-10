@@ -149,7 +149,6 @@ XlaOp IsNegZero(XlaOp operand) {
       case F32:
         return Eq(BitcastConvertType(operand, U32),
                   ConstantR0WithType(&b, U32, uint32{1} << 31));
-      case CUS:
       case F16:
       case BF16:
         // Not all XLA backends handle U16 well, so we convert to F32/U32.

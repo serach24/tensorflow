@@ -51,19 +51,6 @@ inline tensorflow::bfloat16 BitCast<tensorflow::bfloat16, uint16_t>(
 }
 
 template <>
-inline tensorflow::cus BitCast<tensorflow::cus, uint32_t>(
-    uint32_t src) {
-  tensorflow::cus result(src);
-  return result;
-}
-
-template <>
-inline tensorflow::cus BitCast<uint32_t, tensorflow::cus>(
-     tensorflow::cus src) {
-  return (uint32_t)src;
-}
-
-template <>
 inline uint16 BitCast<uint16, tensorflow::bfloat16>(tensorflow::bfloat16 src) {
   return src.value;
 }

@@ -56,7 +56,6 @@ op {
       list {
         type: DT_HALF
         type: DT_BFLOAT16
-        type: DT_CUS
         type: DT_FLOAT
         type: DT_DOUBLE
         type: DT_INT32
@@ -789,7 +788,6 @@ op {
       list {
         type: DT_HALF
         type: DT_BFLOAT16
-        type: DT_CUS
         type: DT_FLOAT
         type: DT_DOUBLE
         type: DT_UINT8
@@ -824,7 +822,6 @@ op {
     allowed_values {
       list {
         type: DT_BFLOAT16
-        type: DT_CUS
         type: DT_HALF
         type: DT_FLOAT
         type: DT_DOUBLE
@@ -1047,7 +1044,6 @@ op {
         type: DT_UINT32
         type: DT_UINT64
         type: DT_BFLOAT16
-        type: DT_CUS
         type: DT_VARIANT
       }
     }
@@ -1195,7 +1191,6 @@ op {
       list {
         type: DT_HALF
         type: DT_BFLOAT16
-        type: DT_CUS
         type: DT_FLOAT
         type: DT_DOUBLE
         type: DT_UINT8
@@ -1231,7 +1226,6 @@ op {
     allowed_values {
       list {
         type: DT_BFLOAT16
-        type: DT_CUS
         type: DT_HALF
         type: DT_FLOAT
         type: DT_DOUBLE

@@ -38,8 +38,8 @@ namespace tensorflow {
 typedef std::complex<float> complex64;
 typedef std::complex<double> complex128;
 
-// using cusWrappedType = uint32_t;
-using cusWrappedType = float;
+using cusWrappedType = uint32_t;
+// using cusWrappedType = float;
 
 struct cus {
   cusWrappedType value;
