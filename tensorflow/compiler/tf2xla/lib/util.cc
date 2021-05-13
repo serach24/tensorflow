@@ -111,10 +111,10 @@ xla::XlaOp IntegerLiteral(xla::XlaBuilder* builder, xla::PrimitiveType type,
       literal =
           xla::LiteralUtil::CreateR0<bfloat16>(static_cast<bfloat16>(value));
       break;
-    case xla::CUS:
-      literal =
-          xla::LiteralUtil::CreateR0<cus>(static_cast<cus>(value));
-      break;
+    // case xla::CUS:
+    //   literal =
+    //       xla::LiteralUtil::CreateR0<cus>(static_cast<cus>(value));
+    //   break;
     case xla::F16:
       literal =
           xla::LiteralUtil::CreateR0<xla::half>(static_cast<xla::half>(value));

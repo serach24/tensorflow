@@ -87,8 +87,6 @@ class DequantizeOp : public XlaOpKernel {
 
     if (dtype_ == DT_BFLOAT16) {
       output = xla::ConvertElementType(output, xla::BF16);
-    } else if (dtype_ == DT_CUS) {
-      output = xla::ConvertElementType(output, xla::CUS);
     }
     ctx->SetOutput(0, output);
   }
