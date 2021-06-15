@@ -142,6 +142,7 @@ Literal ConvertType(LiteralSlice literal) {
   return Literal(ShapeUtil::MakeTokenShape());
 }
 
+// todo(chenhao) customize literal util according to cus definition 
 /* static */ Literal LiteralUtil::Zero(PrimitiveType primitive_type) {
   switch (primitive_type) {
     case U8:
@@ -168,6 +169,8 @@ Literal ConvertType(LiteralSlice literal) {
       return LiteralUtil::CreateR0<float>(0);
     case F64:
       return LiteralUtil::CreateR0<double>(0);
+    case CUS:
+      return LiteralUtil::CreateR0<cus>(static_cast<cus>(0.0f));
     case C64:
       return LiteralUtil::CreateR0<complex64>(0);
     case C128:
@@ -209,6 +212,8 @@ Literal ConvertType(LiteralSlice literal) {
       return LiteralUtil::CreateR0<float>(1);
     case F64:
       return LiteralUtil::CreateR0<double>(1);
+    case CUS:
+      return LiteralUtil::CreateR0<cus>(static_cast<cus>(1.0f));
     case C64:
       return LiteralUtil::CreateR0<complex64>(1);
     case C128:
@@ -248,6 +253,8 @@ Literal ConvertType(LiteralSlice literal) {
     case F64:
       return LiteralUtil::CreateR0<double>(
           -std::numeric_limits<double>::infinity());
+    case CUS:
+      return LiteralUtil::CreateR0<cus>(static_cast<cus>(-std::numeric_limits<float>::infinity()));
     case C64:
       LOG(FATAL) << "C64 element type has no minimum value";
     case C128:
@@ -293,6 +300,8 @@ Literal ConvertType(LiteralSlice literal) {
     case F64:
       return LiteralUtil::CreateR0<double>(
           std::numeric_limits<double>::infinity());
+    case CUS:
+      return LiteralUtil::CreateR0<cus>(static_cast<cus>(std::numeric_limits<float>::infinity()));
     case PRED:
       return LiteralUtil::CreateR0<bool>(true);
     case F16:
