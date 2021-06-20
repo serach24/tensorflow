@@ -39,17 +39,12 @@ typedef std::complex<double> complex128;
 struct cus {
   uint32_t value;
 
- public:
-  void setValue(float v) { value = v; }
   constexpr CUSTOM_DEVICE_FUNC cus() : value(0) {}
 
   constexpr CUSTOM_DEVICE_FUNC cus(const float& f) : value() {
-    assert(sizeof f == sizeof value);
-    memcpy(&value, &f, sizeof value);
+    value = castF32ToValue(f);
   }
 
-  // explicit constexpr CUSTOM_DEVICE_FUNC cus(const uint32_t& u)
-  //     : value(static_cast<uint32_t>(u)) {}
   explicit constexpr CUSTOM_DEVICE_FUNC cus(const double& d)
       : cus(static_cast<float>(d)) {}
   explicit constexpr CUSTOM_DEVICE_FUNC cus(const complex64& c64)
@@ -61,105 +56,32 @@ struct cus {
   explicit constexpr CUSTOM_DEVICE_FUNC cus(const T& value)
       : cus(static_cast<float>(value)) {}
 
-  CUSTOM_DEVICE_FUNC operator float() const {
-    float f;
-    assert(sizeof f == sizeof value);
-    memcpy(&f, &value, sizeof f);
-    return f;
-    // return static_cast<float>(value);
-  }
+  CUSTOM_DEVICE_FUNC operator float() const { return castValueToF32(value); }
 
   explicit CUSTOM_DEVICE_FUNC operator double() const {
     float f = static_cast<float>(*this);
     return static_cast<double>(f);
   }
 
-  // explicit CUSTOM_DEVICE_FUNC operator uint32_t() const {
-  //   return static_cast<uint32_t>(value);
-  // }
+  uint32_t castF32ToValue(const float& f) const;
+  float castValueToF32(const uint32_t& u) const;
 
-  // template <class T>
-  // explicit CUSTOM_DEVICE_FUNC operator T() const {
-  //   return static_cast<T>(value);
-  // }
-
-  // explicit CUSTOM_DEVICE_FUNC operator uint32_t() const { return value;
-  // }
-
-  // CUSTOM_DEVICE_FUNC inline cus& operator=(uint32_t i) {
-
-  //   return *this;
-  // }
-
-  // CUSTOM_DEVICE_FUNC inline cus& operator=(const cus& a) {
-  //   this->setValue(static_cast<uint32_t>(a));
-  //   return *this;
-  // }
+  friend CUSTOM_DEVICE_FUNC cus operator+(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator-(const cus& a);
+  friend CUSTOM_DEVICE_FUNC cus operator-(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator*(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator/(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator+=(cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator-=(cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator*=(cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC cus operator/=(cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC bool operator<(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC bool operator<=(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC bool operator==(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC bool operator!=(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC bool operator>(const cus& a, const cus& b);
+  friend CUSTOM_DEVICE_FUNC bool operator>=(const cus& a, const cus& b);
 };
-
-CUSTOM_DEVICE_FUNC inline cus operator+(const cus& a, const cus& b) {
-  return cus(static_cast<float>(a) + static_cast<float>(b));
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator-(const cus& a) {
-  return cus(-static_cast<float>(a));
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator-(const cus& a, const cus& b) {
-  return cus(static_cast<float>(a) - static_cast<float>(b));
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator*(const cus& a, const cus& b) {
-  return cus(static_cast<float>(a) * static_cast<float>(b));
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator/(const cus& a, const cus& b) {
-  return cus(static_cast<float>(a) / static_cast<float>(b));
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator+=(cus& a, const cus& b) {
-  a = a + b;
-  return a;
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator-=(cus& a, const cus& b) {
-  a = a - b;
-  return a;
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator*=(cus& a, const cus& b) {
-  a = a * b;
-  return a;
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator/=(cus& a, const cus& b) {
-  a = a / b;
-  return a;
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator<(const cus& a, const cus& b) {
-  return static_cast<float>(a) < static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator<=(const cus& a, const cus& b) {
-  return static_cast<float>(a) <= static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator==(const cus& a, const cus& b) {
-  return static_cast<float>(a) == static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator!=(const cus& a, const cus& b) {
-  return static_cast<float>(a) != static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator>(const cus& a, const cus& b) {
-  return static_cast<float>(a) > static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator>=(const cus& a, const cus& b) {
-  return static_cast<float>(a) >= static_cast<float>(b);
-}
 
 }  // namespace tensorflow
 
