@@ -120,11 +120,13 @@ struct SparseXentFunctor<CPUDevice, T, Index> {
       SparseSoftmaxXentWithLogitsOp<Dev##Device, T, Index>);
 REGISTER(CPU, float, int32)
 REGISTER(CPU, float, int64)
+REGISTER(CPU, cus, int32)
 REGISTER(CPU, double, int32)
 REGISTER(CPU, double, int64)
 REGISTER(CPU, Eigen::half, int32)
 REGISTER(CPU, Eigen::half, int64)
 
+// todo(chenhao) register here for gpu
 #if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
 REGISTER(GPU, float, int32)
 REGISTER(GPU, float, int64)

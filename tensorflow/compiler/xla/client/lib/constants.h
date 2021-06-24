@@ -34,7 +34,8 @@ template <typename T>
 XlaOp ConstantR0WithType(XlaBuilder* builder, PrimitiveType type, T value) {
   if (std::is_floating_point<T>::value &&
       !(primitive_util::IsFloatingPointType(type) ||
-        primitive_util::IsComplexType(type))) {
+        primitive_util::IsComplexType(type) ||
+        primitive_util::IsCusType(type))) {
     return builder->ReportError(InvalidArgument(
         "Invalid cast from floating point type to %s in ConstantR0WithType.",
         PrimitiveType_Name(type)));

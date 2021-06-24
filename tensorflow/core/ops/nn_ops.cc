@@ -1181,7 +1181,7 @@ REGISTER_OP("SoftsignGrad")
 REGISTER_OP("Softmax")
     .Input("logits: T")
     .Output("softmax: T")
-    .Attr("T: {half, bfloat16, float, double}")
+    .Attr("T: {half, bfloat16, cus, float, double}")
     .SetShapeFn([](InferenceContext* c) {
       return shape_inference::UnchangedShapeWithRankAtLeast(c, 1);
     });
@@ -1235,7 +1235,7 @@ REGISTER_OP("SparseSoftmaxCrossEntropyWithLogits")
     .Input("labels: Tlabels")
     .Output("loss: T")
     .Output("backprop: T")
-    .Attr("T: {half, bfloat16, float, double}")
+    .Attr("T: {half, bfloat16, cus, float, double}")
     .Attr("Tlabels: {int32, int64} = DT_INT64")
     .SetShapeFn([](InferenceContext* c) {
       ShapeHandle features;

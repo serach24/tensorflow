@@ -454,12 +454,22 @@ StatusOr<llvm::Value*> ElementalIrEmitter::EmitCusUnaryOp(
           primitive_util::BitWidth(from_type),
           primitive_util::BitWidth(to_type));
     }
-    // case HloOpcode::kExp:
-    //   return EmitExp(op->shape().element_type(), operand_value);
+    case HloOpcode::kExp:{
+      // PrimitiveType from_type = op->operand(0)->shape().element_type();
+      // todo(chenhao) cast to f32 to calculate for now
+      operand_value = EmitCusToF32(operand_value, b_);
+      auto value = EmitExp(op->shape().element_type(), operand_value);
+      return EmitF32ToCus(value.ValueOrDie(), b_);
+    }
     // case HloOpcode::kExpm1:
     //   return EmitExpm1(op->shape().element_type(), operand_value);
-    // case HloOpcode::kLog:
-    //   return EmitLog(op->shape().element_type(), operand_value);
+    case HloOpcode::kLog:{
+      // PrimitiveType from_type = op->operand(0)->shape().element_type();
+      // todo(chenhao) cast to f32 to calculate for now
+      operand_value = EmitCusToF32(operand_value, b_);
+      auto value = EmitLog(op->shape().element_type(), operand_value);
+      return EmitF32ToCus(value.ValueOrDie(), b_);
+    }
     // case HloOpcode::kLog1p:
     //   return EmitLog1p(op->shape().element_type(), operand_value);
     // case HloOpcode::kCos:
@@ -468,10 +478,16 @@ StatusOr<llvm::Value*> ElementalIrEmitter::EmitCusUnaryOp(
     //   return EmitSin(op->shape().element_type(), operand_value);
     // case HloOpcode::kTanh:
     //   return EmitTanh(op->shape().element_type(), operand_value);
-    // case HloOpcode::kSqrt:
-    //   return EmitSqrt(op->shape().element_type(), operand_value);
-    // case HloOpcode::kRsqrt:
-    //   return EmitRsqrt(op->shape().element_type(), operand_value);
+    case HloOpcode::kSqrt:{
+      operand_value = EmitCusToF32(operand_value, b_);
+      auto value = EmitSqrt(op->shape().element_type(), operand_value);
+      return EmitF32ToCus(value.ValueOrDie(), b_);
+    }
+    case HloOpcode::kRsqrt:{
+      operand_value = EmitCusToF32(operand_value, b_);
+      auto value = EmitRsqrt(op->shape().element_type(), operand_value);
+      return EmitF32ToCus(value.ValueOrDie(), b_);
+    }
     // case HloOpcode::kCbrt:
     //   return EmitCbrt(op->shape().element_type(), operand_value);
     // case HloOpcode::kFloor:
@@ -1010,6 +1026,7 @@ StatusOr<llvm::Value*> ElementalIrEmitter::EmitCusBinaryOp(
     //   return FRem(lhs_value, rhs_value);
     case HloOpcode::kCompare: {
       switch (op->comparison_direction()) {
+        // todo(chenhao) need to extend result to i8 for nvptx
         case ComparisonDirection::kEq:
           return EmitCusEq(lhs_value, rhs_value, b_);
         case ComparisonDirection::kNe:
@@ -1024,12 +1041,22 @@ StatusOr<llvm::Value*> ElementalIrEmitter::EmitCusBinaryOp(
           return EmitCusGe(lhs_value, rhs_value, b_);
       }
     }
-    case HloOpcode::kMaximum:
-      return EmitFloatMax(lhs_value, rhs_value);
+    case HloOpcode::kMaximum:{
+      lhs_value = EmitCusToF32(lhs_value, b_);
+      rhs_value = EmitCusToF32(rhs_value, b_);
+      auto value = EmitFloatMax(lhs_value, rhs_value);
+      return EmitF32ToCus(value, b_);
+      // return EmitCusMax(lhs_value, rhs_value, b_);
+    }
+      
     // case HloOpcode::kMinimum:
     //   return EmitFloatMin(lhs_value, rhs_value);
-    // case HloOpcode::kPower:
-    //   return EmitPow(op->shape().element_type(), lhs_value, rhs_value);
+    case HloOpcode::kPower:{
+      lhs_value = EmitCusToF32(lhs_value, b_);
+      rhs_value = EmitCusToF32(rhs_value, b_);
+      auto value = EmitPow(op->shape().element_type(), lhs_value, rhs_value);
+      return EmitF32ToCus(value.ValueOrDie(), b_);
+    }
     // case HloOpcode::kAtan2:
     //   return EmitAtan2(op->shape().element_type(), lhs_value, rhs_value);
     default:

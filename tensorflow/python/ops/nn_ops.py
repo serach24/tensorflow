@@ -3931,7 +3931,7 @@ def softmax_cross_entropy_with_logits_v2_helper(
     logits = ops.convert_to_tensor(logits, name="logits")
     labels = ops.convert_to_tensor(labels, name="labels")
     convert_to_float32 = (
-        logits.dtype == dtypes.float16 or logits.dtype == dtypes.bfloat16)
+        logits.dtype == dtypes.float16 or logits.dtype == dtypes.bfloat16 or logits.dtype==dtypes.cus)
     precise_logits = math_ops.cast(
         logits, dtypes.float32) if convert_to_float32 else logits
     # labels and logits must be of the same type
@@ -4160,6 +4160,8 @@ def sparse_softmax_cross_entropy_with_logits(
           precise_logits, labels, name=name)
       if logits.dtype == dtypes.float16:
         return math_ops.cast(cost, dtypes.float16)
+      # elif logits.dtype == dtypes.cus:
+      #   return math_ops.cast(cost, dtypes.cus)
       else:
         return cost
 
@@ -4183,7 +4185,9 @@ def sparse_softmax_cross_entropy_with_logits(
       cost = array_ops.reshape(cost, labels_shape)
       cost.set_shape(labels_static_shape)
       if logits.dtype == dtypes.float16:
-        return math_ops.cast(cost, dtypes.float16)
+        return math_ops.cast(cost, dtypes.float16)      
+      # if logits.dtype == dtypes.cus:
+      #   return math_ops.cast(cost, dtypes.cus)
       else:
         return cost
 
@@ -5812,6 +5816,8 @@ def isotonic_regression(inputs, decreasing=True, axis=-1):
           dtypes.float32,
       dtypes.int16:
           dtypes.float32,
+      dtypes.cus:
+          dtypes.cus,
   }
   inputs = ops.convert_to_tensor(inputs)
   try:

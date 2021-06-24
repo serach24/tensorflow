@@ -69,7 +69,7 @@ def _log_device_compatibility_check(policy_name, gpu_details_list):
       is the device details for a GPU, as returned by
       `tf.config.experimental.get_device_details()`.
   """
-  if policy_name != 'mixed_float16':
+  if policy_name != 'mixed_float16' or policy_name != 'mixed_cus':
     # TODO(b/145686977): Log if the policy is 'mixed_bfloat16'. This requires
     # checking if a TPU is available.
     return

@@ -3,7 +3,6 @@
 
 // #include "tensorflow/compiler/xla/service/custom_call_target_registry.h"
 // #include "tensorflow/compiler/xla/service/llvm_ir/llvm_util.h"
-#include "tensorflow/compiler/xla/types.h"
 #include "tensorflow/compiler/xla/service/llvm_ir/llvm_util.h"
 #include "tensorflow/compiler/xla/statusor.h"
 
@@ -15,7 +14,6 @@ StatusOr<llvm::Value*> EmitF32ToCus(llvm::Value* f32_value,
                                     llvm::IRBuilder<>* b);
 
 llvm::Value* EmitCusNeg(llvm::Value* cus_value, llvm::IRBuilder<>* b);
-
 
 #define CUS_BINARY_OP_HEADER(op)                               \
   llvm::Value* EmitCus##op(llvm::Value* lhs, llvm::Value* rhs, \
@@ -32,6 +30,8 @@ CUS_BINARY_OP_HEADER(Gt);
 CUS_BINARY_OP_HEADER(Le);
 CUS_BINARY_OP_HEADER(Ge);
 
+llvm::Value* EmitCusMax(llvm::Value* lhs_value, llvm::Value* rhs_value,
+                        llvm::IRBuilder<>* b);
 
 }  // namespace xla
 

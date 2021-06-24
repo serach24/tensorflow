@@ -199,7 +199,7 @@ class Policy(object):
       raise TypeError("'name' must be a string, but got: %s" % (name,))
     self._name = name
     self._compute_dtype, self._variable_dtype = self._parse_name(name)
-    if name in ('mixed_float16', 'mixed_bloat16'):
+    if name in ('mixed_float16', 'mixed_bloat16', 'mixed_cus'):
       device_compatibility_check.log_device_compatibility_check(name)
 
   def _parse_name(self, name):
@@ -228,6 +228,8 @@ class Policy(object):
       return 'float16', 'float32'
     elif name == 'mixed_bfloat16':
       return 'bfloat16', 'float32'
+    elif name == 'mixed_cus':
+      return 'cus', 'float32'
     elif name == '_infer':
       # The "_infer" policy exists only for compatibility with TF 1, where
       # "_infer" is the default. The behavior matches the behavior of TF 1's
@@ -371,7 +373,7 @@ class PolicyV1(Policy):
       self._using_default_loss_scale = True
     else:
       self._using_default_loss_scale = False
-    if loss_scale and self._compute_dtype not in (None, 'float16'):
+    if loss_scale and self._compute_dtype not in (None, 'float16', 'cus'):
       tf_logging.warn('Creating a Policy with a loss scale is only useful for '
                       'float16 policies. You passed loss_scale=%r for policy '
                       '%s. Consider not passing any loss_scale instead.' %

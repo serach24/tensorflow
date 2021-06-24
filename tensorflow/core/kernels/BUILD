@@ -1216,6 +1216,7 @@ tf_kernel_library(
     srcs = [
         "tile_functor_cpu.h",
         "tile_functor_cpu_bfloat16.cc",
+        "tile_functor_cpu_cus.cc",
         "tile_functor_cpu_bool.cc",
         "tile_functor_cpu_complex128.cc",
         "tile_functor_cpu_complex64.cc",

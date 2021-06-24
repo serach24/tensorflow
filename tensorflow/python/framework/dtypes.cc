@@ -134,6 +134,12 @@ PYBIND11_MODULE(_dtypes, m) {
           "Returns whether this is a (non-quantized, real) floating point "
           "type.")
       .def_property_readonly(
+          "is_cus",
+          [](tensorflow::DataType self) {
+            return tensorflow::DataTypeIsCus(tensorflow::BaseType(self));
+          },
+          "Returns whether this is a custom data type.")
+      .def_property_readonly(
           "is_integer",
           [](tensorflow::DataType self) {
             return tensorflow::DataTypeIsInteger(tensorflow::BaseType(self));

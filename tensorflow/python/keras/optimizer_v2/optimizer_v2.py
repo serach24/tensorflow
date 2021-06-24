@@ -59,7 +59,7 @@ keras_optimizers_gauge = monitoring.BoolGauge(
     "/tensorflow/api/keras/optimizers", "keras optimizer usage", "method")
 
 _DEFAULT_VALID_DTYPES = frozenset([
-    dtypes.float16, dtypes.bfloat16, dtypes.float32, dtypes.float64,
+    dtypes.float16, dtypes.bfloat16, dtypes.float32, dtypes.float64, dtypes.cus,
     dtypes.complex64, dtypes.complex128
 ])
 

@@ -262,7 +262,8 @@ StatusOr<Shape> InferWindowOutputShape(const Shape& base_shape,
     case HloOpcode::kCbrt:
     case HloOpcode::kTanh:
       if (!ShapeUtil::ElementIsFloating(shape) &&
-          !ShapeUtil::ElementIsComplex(shape)) {
+          !ShapeUtil::ElementIsComplex(shape) &&
+          !ShapeUtil::ElementIsCus(shape)) {
         return InvalidArgument(
             "Expected element type in shape to be floating or complex for %s "
             "operation; got %s.",

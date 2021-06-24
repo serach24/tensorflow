@@ -75,10 +75,28 @@ def FastAppendBFloat16ArrayToTensorProto(tensor_proto, proto_values):
           proto_values, dtype=dtypes.bfloat16.as_numpy_dtype).view(np.uint16))
 
 
+def ExtractBitsFromCus(x):
+  return np.asarray(
+      x, dtype=dtypes.cus.as_numpy_dtype).view(np.uint32).item()
+
+
+def SlowAppendCusArrayToTensorProto(tensor_proto, proto_values):
+  tensor_proto.half_val.extend(
+      [ExtractBitsFromCus(x) for x in proto_values])
+
+
+def FastAppendCusArrayToTensorProto(tensor_proto, proto_values):
+  fast_tensor_util.AppendCusArrayToTensorProto(
+      tensor_proto, np.asarray(
+          proto_values, dtype=dtypes.cus.as_numpy_dtype).view(np.uint32))
+
+
 if _FAST_TENSOR_UTIL_AVAILABLE:
   _NP_TO_APPEND_FN = {
       dtypes.bfloat16.as_numpy_dtype:
           FastAppendBFloat16ArrayToTensorProto,
+      dtypes.cus.as_numpy_dtype:
+          FastAppendCusArrayToTensorProto,
       np.float16:
           _MediumAppendFloat16ArrayToTensorProto,
       np.float32:
@@ -160,6 +178,7 @@ else:
 
   _NP_TO_APPEND_FN = {
       dtypes.bfloat16.as_numpy_dtype: SlowAppendBFloat16ArrayToTensorProto,
+      dtypes.cus.as_numpy_dtype: SlowAppendCusArrayToTensorProto,
       np.float16: SlowAppendFloat16ArrayToTensorProto,
       np.float32: SlowAppendFloat32ArrayToTensorProto,
       np.float64: SlowAppendFloat64ArrayToTensorProto,

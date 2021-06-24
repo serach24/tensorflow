@@ -29,7 +29,7 @@ REGISTER_OP("RandomUniform")
     .Output("output: dtype")
     .Attr("seed: int = 0")
     .Attr("seed2: int = 0")
-    .Attr("dtype: {half,bfloat16,float,double}")
+    .Attr("dtype: {half,bfloat16,float,double,cus}")
     .Attr("T: {int32, int64}")
     .SetShapeFn(shape_inference::RandomShape);
 

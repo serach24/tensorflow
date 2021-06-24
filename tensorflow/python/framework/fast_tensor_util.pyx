@@ -14,6 +14,14 @@ def AppendBFloat16ArrayToTensorProto(
     tensor_proto.half_val.append(nparray[i])
 
 
+def AppendCusArrayToTensorProto(
+    tensor_proto, np.ndarray[np.uint32_t, ndim=1] nparray):
+  cdef long i, n
+  n = nparray.size
+  for i in range(n):
+    tensor_proto.float_val.append(nparray[i])
+
+
 def AppendFloat16ArrayToTensorProto(
     # For numpy, npy_half is a typedef for npy_uint16,
     # see: https://github.com/numpy/numpy/blob/master/doc/source/reference/c-api.coremath.rst#half-precision-functions

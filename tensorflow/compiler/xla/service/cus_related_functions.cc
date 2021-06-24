@@ -83,8 +83,7 @@ llvm::Value* EmitCusNeg(llvm::Value* cus_value, llvm::IRBuilder<>* b) {
   llvm::Module* module = b->GetInsertBlock()->getParent()->getParent();
   llvm::StructType* cus = llvm_ir::getCusTy(module->getContext());
   llvm::Value* func =
-      module->getOrInsertFunction("CusNeg", cus, cus)
-          .getCallee();
+      module->getOrInsertFunction("CusNeg", cus, cus).getCallee();
   return b->CreateCall(llvm::dyn_cast<llvm::Function>(func), {cus_value});
 }
 
@@ -103,15 +102,13 @@ CUS_BINARY_OP(Sub);
 CUS_BINARY_OP(Mul);
 CUS_BINARY_OP(Div);
 
-#define CUS_COMPARE(op)                                              \
+#define CUS_COMPARE(op)                                                     \
   llvm::Value* EmitCus##op(llvm::Value* lhs, llvm::Value* rhs,              \
                            llvm::IRBuilder<>* b) {                          \
     llvm::Module* module = b->GetInsertBlock()->getParent()->getParent();   \
     llvm::StructType* cus = llvm_ir::getCusTy(module->getContext());        \
     llvm::Value* func =                                                     \
-        module                                                              \
-            ->getOrInsertFunction(                                          \
-                "Cus" #op, b->getIntNTy(8), cus, cus) \
+        module->getOrInsertFunction("Cus" #op, b->getIntNTy(1), cus, cus)   \
             .getCallee();                                                   \
     return b->CreateCall(llvm::dyn_cast<llvm::Function>(func), {lhs, rhs}); \
   }
@@ -123,4 +120,18 @@ CUS_COMPARE(Gt);
 CUS_COMPARE(Le);
 CUS_COMPARE(Ge);
 
+llvm::Value* EmitCusMax(llvm::Value* lhs_value, llvm::Value* rhs_value,
+                        llvm::IRBuilder<>* b) {
+  // if (b->getFastMathFlags().noNaNs() || enable_fast_min_max) {
+  //   auto cmp = EmitCusGe(lhs_value, rhs_value);
+  //   return b->CreateSelect(cmp, lhs_value, rhs_value);
+  // } else {
+  //   auto cmp_ge = EmitCusGe(lhs_value, rhs_value);
+  //   auto lhs_is_nan = b->CreateFCmpUNE(lhs_value, lhs_value);
+  //   auto sel_lhs = b->CreateOr(cmp_ge, lhs_is_nan);
+  //   return b->CreateSelect(sel_lhs, lhs_value, rhs_value);
+  // }
+  auto cmp = EmitCusGe(lhs_value, rhs_value, b);
+  return b->CreateSelect(cmp, lhs_value, rhs_value);
+}
 }  // namespace xla

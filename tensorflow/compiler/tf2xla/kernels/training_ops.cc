@@ -559,7 +559,7 @@ class ResourceApplyAdam : public XlaOpKernel {
   bool use_nesterov_;
 };
 REGISTER_XLA_OP(
-    Name("ResourceApplyAdam").TypeConstraint("T", kFloatAndComplexTypes),
+    Name("ResourceApplyAdam").TypeConstraint("T", kFloatAndComplexAndCusTypes),
     ResourceApplyAdam);
 
 class ResourceApplyAdaMax : public XlaOpKernel {

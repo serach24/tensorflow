@@ -259,7 +259,7 @@ class BatchNormalizationBase(Layer):
       raise ValueError('Passing fused=True is unsupported when '
                        'adjustment is specified.')
     # TODO(reedwm): Support fp64 in FusedBatchNorm then remove this check.
-    if self._compute_dtype not in ('float16', 'bfloat16', 'float32', None):
+    if self._compute_dtype not in ('float16', 'bfloat16', 'float32', 'cus', None):
       raise ValueError('Passing fused=True is only supported when the compute '
                        'dtype is float16, bfloat16, or float32. Got dtype: %s' %
                        (self._compute_dtype,))
