@@ -20,82 +20,40 @@ limitations under the License.
 
 namespace tensorflow {
 
-uint32_t cus::castF32ToValue(const float& f) const {
-  uint32_t u;
-  static_assert(sizeof f == sizeof u);
-  memcpy(&u, &f, sizeof value);
-  return u;
+uint32_t cus::castF32ToValue(const float& f){
+  return  *(uint32_t*) &f;
 }
 
-float cus::castValueToF32(const uint32_t& v) const {
-  float f;
-  static_assert(sizeof f == sizeof value);
-  memcpy(&f, &value, sizeof f);
-  return f;
+float cus::castValueToF32(const uint32_t& u){
+  return *(float*)&u;
 }
 
-CUSTOM_DEVICE_FUNC cus operator+(const cus& a, const cus& b) {
+tensorflow::cus CusAdd(tensorflow::cus a, tensorflow::cus b) {
   return cus(static_cast<float>(a) + static_cast<float>(b));
 }
 
-CUSTOM_DEVICE_FUNC cus operator-(const cus& a) {
-  return cus(-static_cast<float>(a));
-}
-
-CUSTOM_DEVICE_FUNC cus operator-(const cus& a, const cus& b) {
+tensorflow::cus CusSub(tensorflow::cus a, tensorflow::cus b) {
   return cus(static_cast<float>(a) - static_cast<float>(b));
 }
 
-CUSTOM_DEVICE_FUNC cus operator*(const cus& a, const cus& b) {
+tensorflow::cus CusMul(tensorflow::cus a, tensorflow::cus b) {
   return cus(static_cast<float>(a) * static_cast<float>(b));
 }
 
-CUSTOM_DEVICE_FUNC cus operator/(const cus& a, const cus& b) {
+tensorflow::cus CusDiv(tensorflow::cus a, tensorflow::cus b) {
   return cus(static_cast<float>(a) / static_cast<float>(b));
 }
 
-CUSTOM_DEVICE_FUNC cus operator+=(cus& a, const cus& b) {
-  a = a + b;
-  return a;
+tensorflow::cus CusNeg(tensorflow::cus a) {
+  return cus(-static_cast<float>(a));
 }
 
-CUSTOM_DEVICE_FUNC cus operator-=(cus& a, const cus& b) {
-  a = a - b;
-  return a;
-}
+bool CusEq(tensorflow::cus a, tensorflow::cus b) { return static_cast<float>(a) == static_cast<float>(b); }
+bool CusNe(tensorflow::cus a, tensorflow::cus b) { return static_cast<float>(a) != static_cast<float>(b); }
+bool CusLt(tensorflow::cus a, tensorflow::cus b) { return static_cast<float>(a) < static_cast<float>(b);}
+bool CusLe(tensorflow::cus a, tensorflow::cus b) { return static_cast<float>(a) <= static_cast<float>(b);}
+bool CusGt(tensorflow::cus a, tensorflow::cus b) { return static_cast<float>(a) > static_cast<float>(b);}
+bool CusGe(tensorflow::cus a, tensorflow::cus b) { return static_cast<float>(a) >= static_cast<float>(b); }
 
-CUSTOM_DEVICE_FUNC cus operator*=(cus& a, const cus& b) {
-  a = a * b;
-  return a;
-}
-
-CUSTOM_DEVICE_FUNC cus operator/=(cus& a, const cus& b) {
-  a = a / b;
-  return a;
-}
-
-CUSTOM_DEVICE_FUNC bool operator<(const cus& a, const cus& b) {
-  return static_cast<float>(a) < static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC bool operator<=(const cus& a, const cus& b) {
-  return static_cast<float>(a) <= static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC bool operator==(const cus& a, const cus& b) {
-  return static_cast<float>(a) == static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC bool operator!=(const cus& a, const cus& b) {
-  return static_cast<float>(a) != static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC bool operator>(const cus& a, const cus& b) {
-  return static_cast<float>(a) > static_cast<float>(b);
-}
-
-CUSTOM_DEVICE_FUNC bool operator>=(const cus& a, const cus& b) {
-  return static_cast<float>(a) >= static_cast<float>(b);
-}
 
 }  // namespace tensorflow
