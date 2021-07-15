@@ -2,63 +2,71 @@
 
 #include "tensorflow/compiler/xla/service/custom_call_target_registry.h"
 
+// #include "llvm/IRReader/IRReader.h"
+// #include "llvm/Support/SourceMgr.h"
+// #include "llvm/Linker/Linker.h"
+// 
 namespace xla {
 
-namespace {
-#ifdef GOOGLE_CUDA
-#define XLA_REGISTER_CUS_RELATED_CALL(function) \
-  XLA_REGISTER_CUSTOM_CALL_TARGET(function, "CUDA")
-#else
-#define XLA_REGISTER_CUS_RELATED_CALL(function) \
-  XLA_CPU_REGISTER_CUSTOM_CALL_TARGET(function);
-#endif
+// namespace {
+// #ifdef GOOGLE_CUDA
+// #define XLA_REGISTER_CUS_RELATED_CALL(function) \
+//   XLA_REGISTER_CUSTOM_CALL_TARGET(function, "CUDA")
+// #else
+// #define XLA_REGISTER_CUS_RELATED_CALL(function) \
+//   XLA_CPU_REGISTER_CUSTOM_CALL_TARGET(function);
+// #endif
 
 // extern c wrapper of cus functions to avoid mangling
-extern "C" {
-float CastCusToF32(tensorflow::cus c) { return (float)(c); }
-tensorflow::cus CastF32ToCus(const float f) { return tensorflow::cus(f); }
-tensorflow::cus CusAdd(tensorflow::cus c1, tensorflow::cus c2) {
-  return c1 + c2;
-}
-tensorflow::cus CusSub(tensorflow::cus c1, tensorflow::cus c2) {
-  return c1 - c2;
-}
-tensorflow::cus CusMul(tensorflow::cus c1, tensorflow::cus c2) {
-  return c1 * c2;
-}
-tensorflow::cus CusDiv(tensorflow::cus c1, tensorflow::cus c2) {
-  return c1 / c2;
-}
+// extern "C" {
+// float CastCusToF32(tensorflow::cus c) { return (float)(c); }
+// tensorflow::cus CastF32ToCus(const float f) { return tensorflow::cus(f); }
+// tensorflow::cus CusAdd(tensorflow::cus c1, tensorflow::cus c2) {
+//   return c1 + c2;
+// }
+// tensorflow::cus CusSub(tensorflow::cus c1, tensorflow::cus c2) {
+//   return c1 - c2;
+// }
+// tensorflow::cus CusMul(tensorflow::cus c1, tensorflow::cus c2) {
+//   return c1 * c2;
+// }
+// tensorflow::cus CusDiv(tensorflow::cus c1, tensorflow::cus c2) {
+//   return c1 / c2;
+// }
 
-tensorflow::cus CusNeg(tensorflow::cus c) { return -c; }
+// tensorflow::cus CusNeg(tensorflow::cus c) { return -c; }
 
-uint8_t CusEq(tensorflow::cus c1, tensorflow::cus c2) { return c1 == c2; }
-uint8_t CusNe(tensorflow::cus c1, tensorflow::cus c2) { return c1 != c2; }
-uint8_t CusLt(tensorflow::cus c1, tensorflow::cus c2) { return c1 < c2; }
-uint8_t CusGt(tensorflow::cus c1, tensorflow::cus c2) { return c1 > c2; }
-uint8_t CusLe(tensorflow::cus c1, tensorflow::cus c2) { return c1 <= c2; }
-uint8_t CusGe(tensorflow::cus c1, tensorflow::cus c2) { return c1 >= c2; }
-}
+// uint8_t CusEq(tensorflow::cus c1, tensorflow::cus c2) { return c1 == c2; }
+// uint8_t CusNe(tensorflow::cus c1, tensorflow::cus c2) { return c1 != c2; }
+// uint8_t CusLt(tensorflow::cus c1, tensorflow::cus c2) { return c1 < c2; }
+// uint8_t CusGt(tensorflow::cus c1, tensorflow::cus c2) { return c1 > c2; }
+// uint8_t CusLe(tensorflow::cus c1, tensorflow::cus c2) { return c1 <= c2; }
+// uint8_t CusGe(tensorflow::cus c1, tensorflow::cus c2) { return c1 >= c2; }
+// }
 
-bool registerCusFunctions() {
-  XLA_REGISTER_CUS_RELATED_CALL(CastCusToF32);
-  XLA_REGISTER_CUS_RELATED_CALL(CastF32ToCus);
-  XLA_REGISTER_CUS_RELATED_CALL(CusAdd);
-  XLA_REGISTER_CUS_RELATED_CALL(CusSub);
-  XLA_REGISTER_CUS_RELATED_CALL(CusMul);
-  XLA_REGISTER_CUS_RELATED_CALL(CusDiv);
-  XLA_REGISTER_CUS_RELATED_CALL(CusNeg);
-  XLA_REGISTER_CUS_RELATED_CALL(CusEq);
-  XLA_REGISTER_CUS_RELATED_CALL(CusNe);
-  XLA_REGISTER_CUS_RELATED_CALL(CusLt);
-  XLA_REGISTER_CUS_RELATED_CALL(CusGt);
-  XLA_REGISTER_CUS_RELATED_CALL(CusLe);
-  XLA_REGISTER_CUS_RELATED_CALL(CusGe);
-  return true;
-}
+// bool registerCusFunctions() {
+//   XLA_REGISTER_CUS_RELATED_CALL(CastCusToF32);
+//   XLA_REGISTER_CUS_RELATED_CALL(CastF32ToCus);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusAdd);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusSub);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusMul);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusDiv);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusNeg);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusEq);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusNe);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusLt);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusGt);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusLe);
+//   XLA_REGISTER_CUS_RELATED_CALL(CusGe);
+//   llvm::LLVMContext context;
+//   llvm::SMDiagnostic error;
+//   auto m = llvm::parseIRFile("/tensorflow/core/platform/cus.bc", error, context);
+//   llvm::Linker::linkModules();
+//   return true;
+// }
 
-bool unused = registerCusFunctions();
-}  // namespace
+// bool unused = registerCusFunctions();
+// }  // namespace
 
 llvm::Value* EmitCusToF32(llvm::Value* cus_value, llvm::IRBuilder<>* b) {
   llvm::Module* module = b->GetInsertBlock()->getParent()->getParent();

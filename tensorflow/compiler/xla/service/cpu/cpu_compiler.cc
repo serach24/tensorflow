@@ -44,6 +44,9 @@ limitations under the License.
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
+#include "llvm/IRReader/IRReader.h"
+#include "llvm/Support/SourceMgr.h"
+#include "llvm/Linker/Linker.h"
 #include "mlir/Dialect/Affine/IR/AffineOps.h"  // from @llvm-project
 #include "mlir/Dialect/LLVMIR/LLVMDialect.h"  // from @llvm-project
 #include "mlir/Dialect/Linalg/IR/LinalgTypes.h"  // from @llvm-project
@@ -753,6 +756,10 @@ StatusOr<std::unique_ptr<Executable>> CpuCompiler::RunBackend(
   if (embed_ir_in_executable) {
     ir_module_string = llvm_ir::DumpModuleToString(*llvm_module);
   }
+  // llvm::LLVMContext context;
+  llvm::SMDiagnostic error;
+  auto m = llvm::parseIRFile("tensorflow/core/platform/cus.bc", error, *llvm_context);
+  llvm::Linker::linkModules(*llvm_module, std::move(m));
 
   TF_RETURN_IF_ERROR(VerifyLlvmModule(*llvm_module));
 

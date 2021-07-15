@@ -61,6 +61,8 @@ struct cus {
 };
 
 
+extern "C" {
+
 inline float CastCusToF32(cus c) { return (float)(c); }
 inline cus CastF32ToCus(const float f) { return cus(f); }
 cus CusAdd(cus a, cus b);
@@ -68,14 +70,14 @@ cus CusSub(cus a, cus b);
 cus CusMul(cus a, cus b);
 cus CusDiv(cus a, cus b);
 cus CusNeg(cus a);
-
 bool CusEq(cus a, cus b);
 bool CusNe(cus a, cus b);
 bool CusLt(cus a, cus b);
 bool CusLe(cus a, cus b);
 bool CusGt(cus a, cus b);
-bool CusGe(cus a, tensorflow::cus b);
+bool CusGe(cus a, cus b);
 
+}
 
 inline CUSTOM_DEVICE_FUNC cus operator+(const cus& a, const cus& b){ return CusAdd(a,b);}
 inline CUSTOM_DEVICE_FUNC cus operator-(const cus& a){ return CusNeg(a);}
