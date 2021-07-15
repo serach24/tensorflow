@@ -146,6 +146,7 @@ cc_library(
 cc_library(
     name = "cus",
     hdrs = ["cus.h"],
+    srcs = ["cus.cc"],
     compatible_with = get_compatible_with_portable(),
     deps = [
     ],

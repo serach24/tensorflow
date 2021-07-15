@@ -31,132 +31,79 @@ limitations under the License.
 
 namespace tensorflow {
 
-// https://stackoverflow.com/questions/25734477/type-casting-struct-to-integer-c
 
 typedef std::complex<float> complex64;
 typedef std::complex<double> complex128;
 
-using cusWrappedType = uint32_t;
-// using cusWrappedType = float;
-
 struct cus {
-  cusWrappedType value;
+  uint32_t value;
 
- public:
-  void setValue(cusWrappedType v) { value = v; }
-  constexpr CUSTOM_DEVICE_FUNC cus() : value(0) {}
-
-  // constexpr CUSTOM_DEVICE_FUNC cus(const cusWrappedType& u) : value(u) {}
-
-  constexpr CUSTOM_DEVICE_FUNC cus(const float& f) : value(static_cast<cusWrappedType>(f)) {}
-
-  explicit constexpr CUSTOM_DEVICE_FUNC cus(const uint32_t& u)
-      : value(static_cast<cusWrappedType>(u)) {}
-  explicit constexpr CUSTOM_DEVICE_FUNC cus(const double& d)
-      : cus(static_cast<cusWrappedType>(d)) {}
-  explicit constexpr CUSTOM_DEVICE_FUNC cus(const complex64& c64)
-      : cus(static_cast<cusWrappedType>(c64.real())) {}
-  explicit constexpr CUSTOM_DEVICE_FUNC cus(const complex128& c128)
-      : cus(static_cast<cusWrappedType>(c128.real())) {}
+  CUSTOM_DEVICE_FUNC constexpr cus() : value(0) {}
+  CUSTOM_DEVICE_FUNC cus(const float& f) : value(castF32ToValue(f)) {}
+  CUSTOM_DEVICE_FUNC cus(const double& d) : cus(static_cast<float>(d)) {}
+  explicit CUSTOM_DEVICE_FUNC cus(const complex64& c64)
+      : cus(static_cast<float>(c64.real())) {}
+  explicit CUSTOM_DEVICE_FUNC cus(const complex128& c128)
+      : cus(static_cast<float>(c128.real())) {}
 
   template <class T>
-  explicit constexpr CUSTOM_DEVICE_FUNC cus(const T& value)
-      : cus(static_cast<cusWrappedType>(value)) {}
+  explicit CUSTOM_DEVICE_FUNC cus(const T& value)
+      : cus(static_cast<float>(value)) {}
 
-  CUSTOM_DEVICE_FUNC operator float() const {
-    return static_cast<float>(value);
-  }
+  CUSTOM_DEVICE_FUNC operator float() const { return castValueToF32(value); }
 
   explicit CUSTOM_DEVICE_FUNC operator double() const {
-    return static_cast<double>(value);
+    float f = static_cast<float>(*this);
+    return static_cast<double>(f);
   }
-
-  explicit CUSTOM_DEVICE_FUNC operator uint32_t() const {
-    return static_cast<uint32_t>(value);
-  }
-
-  // template <class T>
-  // explicit CUSTOM_DEVICE_FUNC operator T() const {
-  //   return static_cast<T>(value);
-  // }
-
-  // explicit CUSTOM_DEVICE_FUNC operator cusWrappedType() const { return value;
-  // }
-
-  // CUSTOM_DEVICE_FUNC inline cus& operator=(cusWrappedType i) {
-
-  //   return *this;
-  // }
-
-  // CUSTOM_DEVICE_FUNC inline cus& operator=(const cus& a) {
-  //   this->setValue(static_cast<cusWrappedType>(a));
-  //   return *this;
-  // }
+  static uint32_t castF32ToValue(const float& f);
+  static float castValueToF32(const uint32_t& u);
 };
 
-CUSTOM_DEVICE_FUNC inline cus operator+(const cus& a, const cus& b) {
-  return cus(static_cast<cusWrappedType>(a) + static_cast<cusWrappedType>(b));
-}
 
-CUSTOM_DEVICE_FUNC inline cus operator-(const cus& a) {
-  return cus(-static_cast<cusWrappedType>(a));
-}
+inline float CastCusToF32(cus c) { return (float)(c); }
+inline cus CastF32ToCus(const float f) { return cus(f); }
+cus CusAdd(cus a, cus b);
+cus CusSub(cus a, cus b);
+cus CusMul(cus a, cus b);
+cus CusDiv(cus a, cus b);
+cus CusNeg(cus a);
 
-CUSTOM_DEVICE_FUNC inline cus operator-(const cus& a, const cus& b) {
-  return cus(static_cast<cusWrappedType>(a) - static_cast<cusWrappedType>(b));
-}
+bool CusEq(cus a, cus b);
+bool CusNe(cus a, cus b);
+bool CusLt(cus a, cus b);
+bool CusLe(cus a, cus b);
+bool CusGt(cus a, cus b);
+bool CusGe(cus a, tensorflow::cus b);
 
-CUSTOM_DEVICE_FUNC inline cus operator*(const cus& a, const cus& b) {
-  return cus(static_cast<cusWrappedType>(a) * static_cast<cusWrappedType>(b));
-}
 
-CUSTOM_DEVICE_FUNC inline cus operator/(const cus& a, const cus& b) {
-  return cus(static_cast<cusWrappedType>(a) / static_cast<cusWrappedType>(b));
-}
-
-CUSTOM_DEVICE_FUNC inline cus operator+=(cus& a, const cus& b) {
+inline CUSTOM_DEVICE_FUNC cus operator+(const cus& a, const cus& b){ return CusAdd(a,b);}
+inline CUSTOM_DEVICE_FUNC cus operator-(const cus& a){ return CusNeg(a);}
+inline CUSTOM_DEVICE_FUNC cus operator-(const cus& a, const cus& b){ return CusSub(a,b);}
+inline CUSTOM_DEVICE_FUNC cus operator*(const cus& a, const cus& b){ return CusMul(a,b);}
+inline CUSTOM_DEVICE_FUNC cus operator/(const cus& a, const cus& b){ return CusDiv(a,b);}
+inline CUSTOM_DEVICE_FUNC cus& operator+=(cus& a, const cus& b) { 
   a = a + b;
   return a;
 }
-
-CUSTOM_DEVICE_FUNC inline cus operator-=(cus& a, const cus& b) {
+inline CUSTOM_DEVICE_FUNC cus& operator-=(cus& a, const cus& b) { 
   a = a - b;
   return a;
 }
-
-CUSTOM_DEVICE_FUNC inline cus operator*=(cus& a, const cus& b) {
+inline CUSTOM_DEVICE_FUNC cus& operator*=(cus& a, const cus& b) { 
   a = a * b;
   return a;
 }
-
-CUSTOM_DEVICE_FUNC inline cus operator/=(cus& a, const cus& b) {
+inline CUSTOM_DEVICE_FUNC cus& operator/=(cus& a, const cus& b){
   a = a / b;
   return a;
 }
-
-CUSTOM_DEVICE_FUNC inline bool operator<(const cus& a, const cus& b) {
-  return static_cast<cusWrappedType>(a) < static_cast<cusWrappedType>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator<=(const cus& a, const cus& b) {
-  return static_cast<cusWrappedType>(a) <= static_cast<cusWrappedType>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator==(const cus& a, const cus& b) {
-  return static_cast<cusWrappedType>(a) == static_cast<cusWrappedType>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator!=(const cus& a, const cus& b) {
-  return static_cast<cusWrappedType>(a) != static_cast<cusWrappedType>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator>(const cus& a, const cus& b) {
-  return static_cast<cusWrappedType>(a) > static_cast<cusWrappedType>(b);
-}
-
-CUSTOM_DEVICE_FUNC inline bool operator>=(const cus& a, const cus& b) {
-  return static_cast<cusWrappedType>(a) >= static_cast<cusWrappedType>(b);
-}
+inline CUSTOM_DEVICE_FUNC bool operator==(const cus& a, const cus& b){ return CusEq(a,b);}
+inline CUSTOM_DEVICE_FUNC bool operator<(const cus& a, const cus& b){ return CusLt(a,b);}
+inline CUSTOM_DEVICE_FUNC bool operator<=(const cus& a, const cus& b){ return CusLe(a,b);}
+inline CUSTOM_DEVICE_FUNC bool operator!=(const cus& a, const cus& b){ return CusNe(a,b);}
+inline CUSTOM_DEVICE_FUNC bool operator>(const cus& a, const cus& b){ return CusGt(a,b);}
+inline CUSTOM_DEVICE_FUNC bool operator>=(const cus& a, const cus& b){ return CusGe(a,b);}
 
 }  // namespace tensorflow
 
@@ -164,7 +111,7 @@ namespace std {
 template <>
 struct hash<tensorflow::cus> {
   std::size_t operator()(tensorflow::cus const& c) const noexcept {
-    std::size_t h1 = std::hash<tensorflow::cusWrappedType>{}(c.value);
+    std::size_t h1 = std::hash<uint32_t>{}(c.value);
     return h1;
   }
 };
